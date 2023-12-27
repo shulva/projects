@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "idt.h": "c",
+        "timer.h": "c",
+        "console.h": "c",
+        "string.h": "c",
+        "types.h": "c",
+        "heap.h": "c"
+    }
+}
