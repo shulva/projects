@@ -1,6 +1,6 @@
 `timescale 1ns / 1ps
 
-module synch_fifo
+module circular_queue
 #(
     //----------------------------------
     // Parameter Declarations
@@ -25,9 +25,7 @@ module synch_fifo
 
     output [FIFO_WIDTH-1:0]         read_data       ,
     output reg                      full            ,
-    output reg                      empty           ,
-    output reg [FIFO_PTR+1:0]         room_avail      ,
-    output [FIFO_PTR+1:0]             data_avail
+    output reg                      empty           
 );
 
     //----------------------------------
@@ -40,74 +38,59 @@ module synch_fifo
     //----------------------------------
     reg [FIFO_WIDTH-1:0] fifo [FIFO_DEPTH>>2] ;
 
-    reg [FIFO_PTR-1:0]              head          ;//头指针
-    reg [FIFO_PTR-1:0]              head_nxt      ;
+    reg [FIFO_PTR-1:0]              head          ;//头指针 4B为单位
 
-    reg [FIFO_PTR-1:0]              tail          ;//尾指针
-    reg [FIFO_PTR-1:0]              tail_nxt      ;
+    reg [FIFO_PTR-1:0]              tail          ;//尾指针 4B为单位
 
-    reg [7:0] count [32] ;
+    reg [8:0] count [32] ;
 
+    reg [4:0] count_head;
+    reg [8:0] index_head;
 
-    wire                            full_nxt        ;
-    wire                            empty_nxt       ;
-    wire [FIFO_PTR:0]               room_avail_nxt  ;
+    reg [4:0] count_tail;
 
 
     //--------------------------------------------------------------------------
     // head-pointer control logic
     //--------------------------------------------------------------------------
-    always @(*)
+    always @(posedge clk or negedge rst_n)
     begin 
-        head_nxt = head ;
-        
-        if (write_en_fifo) begin
-            if (wr_ptr == FIFO_DEPTH_MINUS1)
-                wr_ptr_nxt = 'd0;
-            else
-                wr_ptr_nxt = wr_ptr + 1'b1;
-        end
-    end 
 
+        if(!rst_n)begin
+            head <= 'b0;
+        end
+        else if (read_en_fifo == 1'b1)begin
+            read_data <= fifo[head]
+            head <= head + 1'b1;
+            index_head <= index_head + 1'b1;
+        end
+        else if(count[count_head])
+            count_head <= count_head + 1'b1;
+            index_head <= 9'b0;
+        end
+
+    end 
     //--------------------------------------------------------------------------
     // tail-pointer control logic
     //--------------------------------------------------------------------------
     always @(posedge clk or negedge rst_n)
     begin 
+
         if(!rst_n)begin
             tail <= 'b0;
-            tail_nxt <= 'b0;
         end
         else if (wr_vld == 1'b1)begin
-          fifo[tail] <= write_data;
-          tail <= tail + 1;
-
+            fifo[tail] <= write_data;
+            tail <= tail + 1'b1;
+            count[count_tail] <= count[count_tail] + 1'b1;
         end
-        
-        rd_ptr_nxt = rd_ptr;
-        
-
+        else if((wr_eop == 1'b1) && (wr_vld == 1'b0))
+            count_tail <= count_tail + 1'b1;
+        end
     end 
 
-    //--------------------------------------------------------------------------
-    // calculate number of occupied entries in the FIFO
-    //--------------------------------------------------------------------------
-    always @(*)
-    begin
-        num_entries_nxt = num_entries;
-
-        if (write_en_fifo && read_en_fifo)
-            num_entries_nxt = num_entries;
-        else if (write_en_fifo)
-            num_entries_nxt = num_entries + 1'b1;
-        else if (read_en_fifo)
-            num_entries_nxt = num_entries - 1'b1;
-    end
-
-    assign full_nxt         = (num_entries_nxt == FIFO_DEPTH);
-    assign empty_nxt        = (num_entries_nxt == 'd0);
-    assign data_avail       = num_entries;
-    assign room_avail_nxt   = (FIFO_DEPTH - num_entries_nxt);
+    assign full        = (tail + 1'b1 == head);
+    assign empty        = (head == tail);
 
     //--------------------------------------------------------------------------
     // register output
@@ -119,15 +102,6 @@ module synch_fifo
             tail      <= 9'b0;
             full        <= 1'b0;
             empty       <= 1'b1;
-            room_avail  <= FIFO_DEPTH;
-        end
-        else begin
-            wr_ptr      <= wr_ptr_nxt;
-            rd_ptr      <= rd_ptr_nxt;
-            num_entries <= num_entries_nxt;
-            full        <= full_nxt;
-            empty       <= empty_nxt;
-            room_avail  <= room_avail_nxt;
         end
     end 
 
