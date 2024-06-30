@@ -1,0 +1,11 @@
+# compile verilog/system verilog design source files
+verilog xil_defaultlib  \
+"../../../../CRC.srcs/sources_1/new/sram.v" \
+"../../../../CRC.srcs/sources_1/new/synch_fifo.v" \
+"../../../../CRC.srcs/sim_1/new/tb_synch_fifo.v" \
+
+# compile glbl module
+verilog xil_defaultlib "glbl.v"
+
+# Do not sort compile order
+nosort

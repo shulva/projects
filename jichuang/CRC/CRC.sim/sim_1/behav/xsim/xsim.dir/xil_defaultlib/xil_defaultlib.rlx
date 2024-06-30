@@ -1,0 +1,16 @@
+0.6
+2018.3
+Dec  7 2018
+00:33:28
+E:/vivado/project/CRC/CRC.sim/sim_1/behav/xsim/glbl.v,1544155481,verilog,,,,glbl,,,,,,,,
+E:/vivado/project/CRC/CRC.srcs/sim_1/new/tb_crc.v,1719046641,verilog,,,,tb_crc,,,,,,,,
+E:/vivado/project/CRC/CRC.srcs/sim_1/new/tb_crc16.v,1714817130,verilog,,,,tb_crc16,,,,,,,,
+E:/vivado/project/CRC/CRC.srcs/sim_1/new/tb_crc_new.v,1719301260,verilog,,,,tb_crc_new,,,,,,,,
+E:/vivado/project/CRC/CRC.srcs/sim_1/new/tb_crc_top.v,1715594872,verilog,,,,tb_crc_top,,,,,,,,
+E:/vivado/project/CRC/CRC.srcs/sim_1/new/tb_synch_fifo.v,1712560095,verilog,,,,tb_synch_fifo,,,,,,,,
+E:/vivado/project/CRC/CRC.srcs/sources_1/new/CRC_top.v,1719140847,verilog,,E:/vivado/project/CRC/CRC.srcs/sources_1/new/crc_new.v,,CRC_top,,,,,,,,
+E:/vivado/project/CRC/CRC.srcs/sources_1/new/crc.v,1715757761,verilog,,E:/vivado/project/CRC/CRC.srcs/sim_1/new/tb_crc.v,,crc,,,,,,,,
+E:/vivado/project/CRC/CRC.srcs/sources_1/new/crc16.v,1714646121,verilog,,E:/vivado/project/CRC/CRC.srcs/sim_1/new/tb_crc16.v,,crc16,,,,,,,,
+E:/vivado/project/CRC/CRC.srcs/sources_1/new/crc_new.v,1719052712,verilog,,E:/vivado/project/CRC/CRC.srcs/sources_1/new/synch_fifo.v,,crc_new,,,,,,,,
+E:/vivado/project/CRC/CRC.srcs/sources_1/new/sram.v,1712559026,verilog,,E:/vivado/project/CRC/CRC.srcs/sources_1/new/synch_fifo.v,,sram,,,,,,,,
+E:/vivado/project/CRC/CRC.srcs/sources_1/new/synch_fifo.v,1715590231,verilog,,E:/vivado/project/CRC/CRC.srcs/sim_1/new/tb_crc_top.v,,synch_fifo,,,,,,,,
