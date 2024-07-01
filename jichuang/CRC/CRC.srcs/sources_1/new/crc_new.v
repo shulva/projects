@@ -1,8 +1,8 @@
 module crc_new
 (
-	input				 clk           ,
-	input				 rst_n         ,
-	input   [31:0]       data_in       ,
+    input				 clk           ,
+    input				 rst_n         ,
+    input   [31:0]       data_in       ,
     input                wr_sop        ,
     input                wr_eop        ,
     input                wr_vld        ,
@@ -10,36 +10,36 @@ module crc_new
     input   [7:0]        memory_pick   ,  //RAM选择信号
     input   [7:0]        address_ready ,  //RAM就绪信号
                                        
-	output	reg  [31:0]	 data_true     ,  //crc校验结束输出的数据
-	output	reg			 write_ready   ,  //crc正确后请求输出数据的信号，(history_memory_pick & address_ready)>0后拉低
+    output	reg  [31:0]	 data_true     ,  //crc校验结束输出的数�?
+    output	reg			 write_ready   ,  //crc正确后请求输出数据的信号�?(history_memory_pick & address_ready)>0后拉�?
     output  reg  [10:0]  data_size     ,
     output  reg  [3:0]   dest_port     ,
     output  reg  [9:0]   data_wait_time,
     output  reg  [2:0]   data_priority ,
-    output  reg          write_enable     //输出同步使能
+    output  reg          write_enable ,    //输出同步使能
+    output  reg          crc_true     ,    //CRC校验正确
+    output  reg          crc_finish          //crc结束标志
 );
  
-reg   [8:0]   data_size_cnt;       //最大256次
-reg           wr_eop_reg;          //输入数据结束打一拍（CRC落后一拍）
+reg   [8:0]   data_size_cnt;       //�?�?256�?
+reg           wr_eop_reg;          //输入数据结束打一拍（CRC落后�?拍）
 reg   [8:0]   data_out_cnt = 9'd0; //输出数据计数
-reg   [31:0]  data_real;           //需校验的有效数据（去包头）
-reg           crc_finish;          //crc结束标志
-reg			  crc_true;            //CRC校验正确
-reg   [15:0]  crc_in;              //输入数据的crc值
+reg   [31:0]  data_real;           //�?校验的有效数据（去包头）
+reg   [15:0]  crc_in;              //输入数据的crc�?
 reg   [15:0]  crc_out;             //crc结果
 reg   [15:0]  crc_reg;             //crc寄存
-reg   [15:0]  crc_table [0:255];   //CRC查找表
+reg   [15:0]  crc_table [0:255];   //CRC查找�?
 reg   [31:0]  data_in_reg [0:255]; //输入数据寄存
 reg           write_en;            //数据输出使能
 reg   [7:0]   history_memory_pick;
-reg           write_finish;        //一次传输完毕
-reg   [8:0]   wr_idx = 0;          //data_in_reg读
-reg   [8:0]   rd_idx = 0;          //data_in_reg写
+reg           write_finish;        //�?次传输完�?
+reg   [8:0]   wr_idx = 0;          //data_in_reg�?
+reg   [8:0]   rd_idx = 0;          //data_in_reg�?
 reg   [1:0]   work_state = 2'b00;
 reg   [3:0]   dest_port_reg;
 reg   [2:0]   data_priority_reg;
 
-initial $readmemh("crc_table.txt",crc_table); 
+initial $readmemh("crc_table.txt",crc_table);
 
 integer i,j;
 
@@ -59,7 +59,7 @@ always@(posedge clk or negedge rst_n)
     else 
         wr_idx <= wr_idx;
 
-//---数据包长度计数---//
+//---数据包长度计�?---//
 always@(posedge clk or negedge rst_n)
     if(rst_n == 1'b0)
         data_size_cnt <= 9'd0;
@@ -70,7 +70,7 @@ always@(posedge clk or negedge rst_n)
     else 
         data_size_cnt <= data_size_cnt;      
         
-//---需校验的有效数据（去掉包头）---//       
+//---�?校验的有效数据（去掉包头�?---//       
 always@(posedge clk or negedge rst_n)begin
     if(rst_n == 1'b0)  
         data_real <= 32'd0;
@@ -84,19 +84,19 @@ always@(posedge clk or negedge rst_n)begin
         data_real <= data_real;
 end 
 
-always@(posedge clk or negedge rst_n) //打一拍
+always@(posedge clk or negedge rst_n) //打一�?
     if(rst_n == 1'b0) 
         wr_eop_reg <= 1'b0;
     else
         wr_eop_reg <= wr_eop;
         
-always@(posedge clk or negedge rst_n) //打一拍
+always@(posedge clk or negedge rst_n) //打一�?
     if(rst_n == 1'b0) 
         write_enable <= 1'b0;
     else
         write_enable <= write_en;
 
-//--------取包头数据----------//        
+//--------取包头数�?----------//        
 always@(posedge clk or negedge rst_n)begin
     if(rst_n == 1'b0)begin
         crc_in <= 16'b0;
@@ -108,7 +108,7 @@ always@(posedge clk or negedge rst_n)begin
         dest_port_reg <= data_in[3:0];
         data_priority_reg <= data_in[6:4];    
     end 
-    else if(write_en == 1'b1)begin  //清0条件
+    else if(write_en == 1'b1)begin  //�?0条件
         crc_in <= 16'b0;
         dest_port_reg <= 4'b0;
         data_priority_reg <= 3'b0;
@@ -137,7 +137,7 @@ always@(posedge clk or negedge rst_n)begin
 end        
 
 //----------CRC校验----------//
-always @(posedge clk or negedge rst_n) begin   //crc_reg不能清零？
+always @(posedge clk or negedge rst_n) begin   //crc_reg不能清零�?
     if (!rst_n) 
         crc_reg <= 16'hFFFF;
     else if((wr_vld||wr_eop)&&(data_size_cnt > 9'd1)) begin
@@ -206,7 +206,7 @@ always @(posedge clk or negedge rst_n)
 always@(posedge clk or negedge rst_n) 
     if (!rst_n)
         write_en <= 1'b0;
-    else if((history_memory_pick & address_ready)>0)  //写使能拉高条件
+    else if((history_memory_pick & address_ready)>0)  //写使能拉高条�?
         write_en <= 1'b1;
     else if(data_out_cnt == (data_size_cnt - 1'b1))
         write_en <= 1'b0;
@@ -246,7 +246,7 @@ always @(posedge clk or negedge rst_n)
         data_true <= 32'b0;
     end
 
-//-----------状态转换----------//
+//-----------状�?�转�?----------//
 always @(posedge clk or negedge rst_n) begin
     if (!rst_n)begin
         history_memory_pick <= 8'b0;
@@ -261,7 +261,7 @@ always @(posedge clk or negedge rst_n) begin
         history_memory_pick <= 8'b0;
     end 
     else if(write_finish == 1'b1)
-        work_state <= 2'b00;       
+        work_state <= 2'b00;
 end
 
 

@@ -18,14 +18,16 @@ module circular_queue
     input                           write_en_fifo   ,
     input [FIFO_WIDTH-1:0]          write_data      ,
     input                           read_en_fifo    ,
+    input crc_finish,
+    input crc_true,
 
     input                wr_sop        ,
     input                wr_eop        ,
     input                wr_vld        ,
 
-    output [FIFO_WIDTH-1:0]         read_data       ,
-    output reg                      full            ,
-    output reg                      empty           
+    output reg [FIFO_WIDTH-1:0]         read_data       ,
+    output                       full            ,
+    output                       empty
 );
 
     //----------------------------------
@@ -36,13 +38,14 @@ module circular_queue
     //----------------------------------
     // Variable Declarations
     //----------------------------------
-    reg [FIFO_WIDTH-1:0] fifo [FIFO_DEPTH>>2] ;
+    reg [FIFO_WIDTH-1:0] fifo [FIFO_DEPTH_MINUS1:0] ;
 
-    reg [FIFO_PTR-1:0]              head          ;//头指针 4B为单位
+    reg [FIFO_PTR-1:0]              head          ;//头指�? 4B为单�?
 
-    reg [FIFO_PTR-1:0]              tail          ;//尾指针 4B为单位
+    reg [FIFO_PTR-1:0]              tail          ;//尾指�? 4B为单�?
+    reg [FIFO_PTR-1:0]              history_tail          ;
 
-    reg [8:0] count [32] ;
+    reg [8:0] count [31:0] ;
 
     reg [4:0] count_head;
     reg [8:0] index_head;
@@ -53,41 +56,49 @@ module circular_queue
     //--------------------------------------------------------------------------
     // head-pointer control logic
     //--------------------------------------------------------------------------
-    always @(posedge clk or negedge rst_n)
-    begin 
+      always @(posedge clk or negedge rst_n)
+      begin 
 
-        if(!rst_n)begin
-            head <= 'b0;
-        end
-        else if (read_en_fifo == 1'b1)begin
-            read_data <= fifo[head]
+        if(!rst_n)
+          begin
+            head <= 9'b0;
+          end
+        else if (read_en_fifo == 1'b1 && (empty != 1'b1))
+          begin
+            read_data <= fifo[head];
             head <= head + 1'b1;
             index_head <= index_head + 1'b1;
-        end
+          end
         else if(count[count_head])
+          begin
             count_head <= count_head + 1'b1;
             index_head <= 9'b0;
-        end
-
-    end 
+          end
+      end
     //--------------------------------------------------------------------------
     // tail-pointer control logic
     //--------------------------------------------------------------------------
     always @(posedge clk or negedge rst_n)
     begin 
-
-        if(!rst_n)begin
-            tail <= 'b0;
+      if(!rst_n)
+        begin
+          tail <= 9'b0;
         end
-        else if (wr_vld == 1'b1)begin
-            fifo[tail] <= write_data;
-            tail <= tail + 1'b1;
-            count[count_tail] <= count[count_tail] + 1'b1;
+      else if (wr_sop == 1'b1)
+        begin
+          history_tail <= tail;
         end
-        else if((wr_eop == 1'b1) && (wr_vld == 1'b0))
-            count_tail <= count_tail + 1'b1;
+      else if (wr_vld == 1'b1)
+        begin
+          fifo[tail] <= write_data;
+          tail <= tail + 1'b1;
+          count[count_tail] <= count[count_tail] + 1'b1;
         end
-    end 
+      else if((wr_eop == 1'b1) && (wr_vld == 1'b0))
+        begin
+          count_tail <= count_tail + 1'b1;
+        end
+    end
 
     assign full        = (tail + 1'b1 == head);
     assign empty        = (head == tail);
@@ -95,15 +106,41 @@ module circular_queue
     //--------------------------------------------------------------------------
     // register output
     //--------------------------------------------------------------------------
+    integer i,j;
     always @(posedge clk or negedge rst_n)
     begin
         if (!rst_n) begin
             head      <= 9'b0;
             tail      <= 9'b0;
-            full        <= 1'b0;
-            empty       <= 1'b1;
+            history_tail<= 9'b0;
+            count_head <= 5'b0;
+            count_tail <= 5'b0;
+            index_head<= 9'b0;
+            for(j=0; j<512; j=j+1)
+                fifo[j] <= 32'd0;
+
+            for(i=0; i<32; i=i+1)
+                count[i] <= 9'd0;
         end
     end 
+
+    //--------------------------------------------------------------------------
+    // check crc
+    //--------------------------------------------------------------------------
+    reg crc_finished;
+    always @(posedge clk)
+    begin
+      if (crc_finish == 1'b1)
+      crc_finished <= 1'b1;
+
+      if(crc_finished == 1'b1)           
+      begin
+        if (crc_true == 1'b0)
+          tail <= history_tail;
+
+        crc_finished <= 1'b0;
+      end
+    end
 
     //--------------------------------------------------------------------------
     // SRAM memory instantiation

@@ -39,7 +39,7 @@ initial
         read_en_fifo <= 1'b0;
         #20
         rst_n <= 1'b1;
-        #40
+        #60
         write_en_fifo <= 1'b1;
         #20
         read_en_fifo <= 1'b1;
@@ -131,8 +131,8 @@ CRC_top CRC_top_inst
     .memory_pick   (memory_pick   ),  //RAM选择信号
     .address_ready (address_ready ),  //RAM就绪信号
                     
-	.data_true     (data_true     ),  //crc校验结束输出的数据
-	.write_ready   (write_ready   ),  //crc正确后请求输出数据的信号，(history_memory_pick & address_ready)>0后拉低
+	.data_true     (data_true     ),  //crc校验结束输出的数�?
+	.write_ready   (write_ready   ),  //crc正确后请求输出数据的信号�?(history_memory_pick & address_ready)>0后拉�?
     .data_size     (data_size     ),
     .dest_port     (dest_port     ),
     .data_wait_time(data_wait_time),
