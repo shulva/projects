@@ -15,11 +15,10 @@ module circular_queue
     //----------------------------------
     input                           clk             ,
     input                           rst_n           ,
-    input                           write_en_fifo   ,
     input [FIFO_WIDTH-1:0]          write_data      ,
     input                           read_en_fifo    ,
-    input crc_finish,
-    input crc_true,
+    //input crc_finish,
+    //input crc_true,
 
     input                wr_sop        ,
     input                wr_eop        ,
@@ -27,7 +26,8 @@ module circular_queue
 
     output reg [FIFO_WIDTH-1:0]         read_data       ,
     output                       full            ,
-    output                       empty
+    output                       empty,
+    output reg [FIFO_PTR-1:0] room_avail  //以B为单位
 );
 
     //----------------------------------
@@ -40,12 +40,12 @@ module circular_queue
     //----------------------------------
     reg [FIFO_WIDTH-1:0] fifo [FIFO_DEPTH_MINUS1:0] ;
 
-    reg [FIFO_PTR-1:0]              head          ;//头指�? 4B为单�?
+    reg [FIFO_PTR-1:0]              head          ;//头指针以 4B为单位
 
-    reg [FIFO_PTR-1:0]              tail          ;//尾指�? 4B为单�?
+    reg [FIFO_PTR-1:0]              tail          ;//尾指针以 4B为单位
     reg [FIFO_PTR-1:0]              history_tail          ;
 
-    reg [8:0] count [31:0] ;
+    reg [8:0] count [31:0] ; //包长度数组
 
     reg [4:0] count_head;
     reg [8:0] index_head;
@@ -127,6 +127,7 @@ module circular_queue
     //--------------------------------------------------------------------------
     // check crc
     //--------------------------------------------------------------------------
+    /*
     reg crc_finished;
     always @(posedge clk)
     begin
@@ -141,7 +142,20 @@ module circular_queue
         crc_finished <= 1'b0;
       end
     end
+    */
 
+    //--------------------------------------------------------------------------
+    // room avail calculate
+    //--------------------------------------------------------------------------
+    always @(posedge clk)
+    begin
+      if (head > tail)
+          room_avail <= (head - tail)<<2;
+      else if (head < tail)
+          room_avail <= (512 - tail + head)<<2;
+      else if (head == tail)
+          room_avail <= 9'b0;
+    end
     //--------------------------------------------------------------------------
     // SRAM memory instantiation
     //--------------------------------------------------------------------------

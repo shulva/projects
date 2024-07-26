@@ -50,7 +50,6 @@ fifo_inst
     .clk             (clk),
     .rst_n           (rst_n),
     .write_en_fifo   (write_en_fifo),
-    .write_data      (write_data ),
     .read_en_fifo    (write_enable),
     .crc_true(crc_true),
     .crc_finish(crc_finish),
