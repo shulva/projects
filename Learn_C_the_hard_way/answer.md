@@ -67,3 +67,41 @@ A:可以输出，但name输出结果很奇怪
 Q:研究你是否真正复制了这些字符串？答案可能会让你感到意外和困惑。
 
 A:通过打印指针地址可以看出复制的仅仅是地址，只是让两个指针指向了同一个元素而已。
+
+###### 16
+Q:试着传递NULL给Person_destroy来看看会发生什么。如果它没有崩溃，你必须移除Makefile的CFLAGS中的-g选项。
+
+A:ex1: ex1.c:28: Person_destroy: Assertion `who != NULL' failed.
+Aborted (core dumped)
+
+Q:在结尾处忘记调用Person_destroy，在Valgrind下运行程序，你会看到它报告出你忘记释放内存。弄清楚你应该向valgrind传递什么参数来让它向你报告内存如何泄露。
+
+A:
+==4108539== LEAK SUMMARY:
+==4108539==    definitely lost: 48 bytes in 2 blocks
+==4108539==    indirectly lost: 21 bytes in 2 blocks
+==4108539==      possibly lost: 0 bytes in 0 blocks
+==4108539==    still reachable: 0 bytes in 0 blocks
+==4108539==         suppressed: 0 bytes in 0 blocks
+
+definitely lost：表示有48字节的内存在程序结束时仍然无法访问到，存在内存泄漏。
+indirectly lost：表示有21字节的内存在程序结束时无法访问到，尽管这些内存本身没有泄漏，但与泄漏的内存相关联。
+
+通过Person_create函数创建的两个Person结构体实例中的name成员，每个实例泄漏了24字节（Frank Blank和Joe Alex字符串）。这解释了为什么definitely lost为48字节。
+通过strdup函数复制的name字符串，这导致每个实例相关联的21字节的indirectly lost。
+要修复这些泄漏问题，需要在适当的时候释放内存。
+
+Q:这一次，向Person_print传递NULL，并且观察Valgrind会输出什么。
+A:
+==4111521== Invalid read of size 8
+==4111521==    at 0x1092CA: Person_print (in /home/lighthouse/ex1)
+==4111521==    by 0x109459: main (in /home/lighthouse/ex1)
+==4111521==  Address 0x0 is not stack'd, malloc'd or (recently) free'd
+这个错误的原因可能是Person_create函数中的strdup函数调用失败，无法为name成员分配内存。这导致who->name被设置为NULL，然后在调用Person_print函数时尝试读取NULL指针。
+
+Q:如何在栈上创建结构体，就像你创建任何其它变量那样。如何使用x.y而不是x->y来初始化结构体。
+A:直接在main函数中创建两个结构体变量joe和frank，并使用点操作符（.）来初始化结构体成员。(在栈上直接在函数中使用结构体即可，不用Malloc)
+
+
+Q:如何不使用指针来将结构体传给其它函数。
+A:直接传副本就好
