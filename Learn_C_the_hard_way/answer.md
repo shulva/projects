@@ -1,3 +1,4 @@
+[Learn_C_the_hard_way](https://wizardforcel.gitbooks.io/lcthw/content/preface.html)
 ###### 7
 Q:把为universe_of_defects赋值的数改为不同的大小，观察编译器的警告。
 
@@ -68,6 +69,21 @@ Q:研究你是否真正复制了这些字符串？答案可能会让你感到意
 
 A:通过打印指针地址可以看出复制的仅仅是地址，只是让两个指针指向了同一个元素而已。
 
+###### 13
+Q:在“Y”的例子中，我在if代码块外面写了个break。这样会产生什么效果？如果把它移进if代码块，会发生什么？自己试着解答它，并证明你是正确的。
+
+A:
+类似
+```
+for()
+{
+   switch():
+      if()
+         break;
+}
+```
+的结构，其中的break不会使for提前终止循环，其仍起到终止switch的作用。
+
 ###### 16
 Q:试着传递NULL给Person_destroy来看看会发生什么。如果它没有崩溃，你必须移除Makefile的CFLAGS中的-g选项。
 
@@ -105,3 +121,18 @@ A:直接在main函数中创建两个结构体变量joe和frank，并使用点操
 
 Q:如何不使用指针来将结构体传给其它函数。
 A:直接传副本就好
+###### 17
+实际情况是，除char外，所有其他类型都有“对齐要求”：char可起始于任意字节地址，2字节的short必须从偶数字节地址开始，4字节的int或float必须从能被4整除的地址开始，8比特的long和double必须从能被8整除的地址开始。无论signed（有符号）还是unsigned（无符号）都不受影响。
+
+[失传的C结构体打包技艺](https://www.cnblogs.com/likaiming/p/9009495.html)
+###### 18
+Q:将错误的函数传给compare_cb，并看看C编辑器会报告什么错误。
+A:Incompatible function pointer types passing 'void (const char *)' to parameter of type 'compare_cb' (aka 'int (*)(int, int)')
+Q:将NULL传给它，看看程序中会发生什么。然后运行Valgrind来看看它会报告什么。
+A:运行会发生segmentation fault。Valgrind显示传递了无效参数，导致内存泄漏。
+
+###### 22
+Q:移除ex22.h的extern声明，来观察会得到什么错误或警告。
+A:没有错误或警告。。,头文件不去掉不是没效果吗？
+Q:编写一个递归调用并导致栈溢出的函数。如果不知道递归函数是什么的话，试着在scope_demo底部调用scope_demo本身，会形成一种循环。
+A:segmentation fault

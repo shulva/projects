@@ -1,8 +1,7 @@
 CFLAGS=-Wall -g
 
-all:ex23
+all:ex19
 
+ex19: object.o
 clean:
-	rm -f  *.o
-	rm -rf ex*.dSYM
 	fd 'ex[0-9]+$$' | xargs rm -f
