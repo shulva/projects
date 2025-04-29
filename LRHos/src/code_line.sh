@@ -1,5 +1,5 @@
-#!/bin/bash
-find . -name '*.h' | xargs wc -l
-find . -name '*.sh' | xargs wc -l
-find . -name '*.c' | xargs wc -l
-find . -name '*.s' | xargs wc -l
+#/bin/bash
+find . -name '*.h' -print0 | xargs -0 wc -l
+find . -name '*.sh' -print0 | xargs -0 wc -l
+find . -name '*.c' -print0 | xargs -0 wc -l
+find . -name '*.s' -print0 | xargs -0 wc -l

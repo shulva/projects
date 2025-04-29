@@ -48,7 +48,7 @@ void thread_create(thread_pcb *pthread, thread_func func, void *func_arg)
 
     pthread->itself_stack = pthread->itself_stack - sizeof(thread_stack); //预留线程栈的空间
 
-    thread_stack *kernel_thread_stack = (thread_stack *)pthread->itself_stack;
+    thread_stack *kernel_thread_stack = (thread_stack *)pthread->itself_stack;//此时itself_stack在线程栈位置
 
     kernel_thread_stack->eip = kernel_thread;
 
@@ -65,7 +65,7 @@ void init_thread(thread_pcb *pthread, char *name, int priority)
 {
     // console_write_hex(main_thread->all_tag.next,black,white);
 
-    memset(pthread, 0, sizeof(thread_pcb));
+    memset(pthread, 0, sizeof(thread_pcb)); // pthread此时指向PCB的最低地址 (p427)
 
     // console_write_hex(main_thread->all_tag.next,black,white);
 
@@ -82,7 +82,7 @@ void init_thread(thread_pcb *pthread, char *name, int priority)
         pthread->status = TASK_READY;
     }
 
-    pthread->itself_stack = (uint32_t *)((uint32_t)pthread + PAGE_SIZE);
+    pthread->itself_stack = (uint32_t *)((uint32_t)pthread + PAGE_SIZE); // pthread此时指向最高地址,预留了很多空间给栈
     pthread->ticks = priority;
     pthread->page_dir = NULL; //线程没有自己的地址空间
     pthread->done_ticks = 0;  //尚未运行
@@ -136,10 +136,11 @@ thread_pcb *thread_start(char *name, int priority, thread_func func, void *func_
     assert(!node_find(&all_thread_list, &thread->all_tag), "\nrepeat in all thread list");
     list_append(&all_thread_list, &thread->all_tag);
 
-    // asm volatile("movl %0, %%esp; pop %%ebp ; pop %%ebx; pop %%edi; pop %%esi; ret"
-    //              :
-    //              : "g"(thread->itself_stack)
-    //              : "memory");
+     asm volatile("movl %0, %%esp; pop %%ebp ; pop %%ebx; pop %%edi; pop %%esi; ret"
+                  :
+                  : "g"(thread->itself_stack)//此时itself_stack在线程栈位置,sp等于线程栈顶,pop结束后,ret会把栈顶的数据作为返回地址送上处理器的
+    //EIP 寄存器，即为函数地址，线程开始执行函数
+                  : "memory");
 
     // console_write("\nready\n");
     // list_show(&ready_thread_list);
