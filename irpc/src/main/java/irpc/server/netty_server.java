@@ -148,6 +148,7 @@ public class netty_server {
 
         server.init_server_config();
         server.register_service(new data_service_impl()); //通过zookeeper注册
+        server.register_service(new user_service_impl());
         server.start();
     }
 }

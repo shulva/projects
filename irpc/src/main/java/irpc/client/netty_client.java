@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import core.register.URL;
 import core.register.zookeeper.Zookeeper_Register;
 import core.config.Client_Config;
-import rpc_interface.data_service;
 import core.proxy.JDK_proxy_factory;
 import core.register.zookeeper.Abstract_Register;
 import core.rpc.RPC_decoder;
@@ -35,6 +34,8 @@ import core.rpc.common_utils;
 
 import java.util.List;
 
+import rpc_interface.data_service;
+import rpc_interface.user_service;
 import static core.cache.client_cache.*;
 import static core.cache.server_cache.SERVER_SERIALIZE_FACTORY;
 
@@ -214,6 +215,10 @@ public class netty_client {
 
             data_service service = reference.getProxy(data_service.class);//获取代理对象，设置缓存信息,用订阅时调用
             client.subscribe_service(data_service.class);//订阅某个服务，添加到本地缓存subscribe_service_list
+
+            user_service user_service = reference.getProxy(user_service.class);
+            client.subscribe_service(user_service.class);
+
             Connection_Handler.set_bootstrap(client.get_bootstrap());
 
             //订阅服务，从subscribe_service_list中获取需要订阅的服务信息，添加注册中心的监听
@@ -228,6 +233,7 @@ public class netty_client {
                     //异步线程接收到SEND_QUEUE数据，发起netty调用，在invoke方法循环中获取RESP_MAP缓存中的响应数据
                     //在Client_handler中将请求方法和响应数据放入RESP_MAP中
                     String res = service.send_data("hello");
+                    user_service.test(); //不返回数据的
                     System.out.println(res);
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {

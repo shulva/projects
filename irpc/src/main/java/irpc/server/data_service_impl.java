@@ -8,7 +8,7 @@ public class data_service_impl implements data_service{
     @Override
     public String send_data(String data) {
         System.out.println("invoke success");
-        return "invoke success";
+        return data;
     }
 
     @Override
