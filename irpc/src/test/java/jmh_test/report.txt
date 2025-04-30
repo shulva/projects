@@ -1,0 +1,125 @@
+# JMH version: 1.21
+# VM version: JDK 22.0.2, Java HotSpot(TM) 64-Bit Server VM, 22.0.2+9-70
+# VM invoker: /Library/Java/JavaVirtualMachines/jdk-22.jdk/Contents/Home/bin/java
+# VM options: -javaagent:/Applications/IntelliJ IDEA.app/Contents/lib/idea_rt.jar=54393:/Applications/IntelliJ IDEA.app/Contents/bin -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+# Warmup: 2 iterations, 10 s each
+# Measurement: 5 iterations, 10 s each, 2 calls per op
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: jmh_test.Serilaize_Compare.fastJsonSerializeTest
+
+# Run progress: 0.00% complete, ETA 00:04:40
+# Fork: 1 of 1
+# Warmup Iteration   1: 1744570.797 ops/s
+# Warmup Iteration   2: 1751272.028 ops/s
+Iteration   1: 870273.917 ops/s
+Iteration   2: 871875.495 ops/s
+Iteration   3: 876085.392 ops/s
+Iteration   4: 880007.903 ops/s
+Iteration   5: 876848.023 ops/s
+
+
+Result "jmh_test.Serilaize_Compare.fastJsonSerializeTest":
+  875018.146 ±(99.9%) 15131.745 ops/s [Average]
+  (min, avg, max) = (870273.917, 875018.146, 880007.903), stdev = 3929.666
+  CI (99.9%): [859886.401, 890149.890] (assumes normal distribution)
+
+
+# JMH version: 1.21
+# VM version: JDK 22.0.2, Java HotSpot(TM) 64-Bit Server VM, 22.0.2+9-70
+# VM invoker: /Library/Java/JavaVirtualMachines/jdk-22.jdk/Contents/Home/bin/java
+# VM options: -javaagent:/Applications/IntelliJ IDEA.app/Contents/lib/idea_rt.jar=54393:/Applications/IntelliJ IDEA.app/Contents/bin -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+# Warmup: 2 iterations, 10 s each
+# Measurement: 5 iterations, 10 s each, 2 calls per op
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: jmh_test.Serilaize_Compare.hessianSerializeTest
+
+# Run progress: 25.00% complete, ETA 00:03:31
+# Fork: 1 of 1
+# Warmup Iteration   1: 613592.300 ops/s
+# Warmup Iteration   2: 629454.591 ops/s
+Iteration   1: 313411.269 ops/s
+Iteration   2: 308003.565 ops/s
+Iteration   3: 307407.907 ops/s
+Iteration   4: 298098.665 ops/s
+Iteration   5: 298723.590 ops/s
+
+
+Result "jmh_test.Serilaize_Compare.hessianSerializeTest":
+  305128.999 ±(99.9%) 25287.578 ops/s [Average]
+  (min, avg, max) = (298098.665, 305128.999, 313411.269), stdev = 6567.104
+  CI (99.9%): [279841.421, 330416.577] (assumes normal distribution)
+
+
+# JMH version: 1.21
+# VM version: JDK 22.0.2, Java HotSpot(TM) 64-Bit Server VM, 22.0.2+9-70
+# VM invoker: /Library/Java/JavaVirtualMachines/jdk-22.jdk/Contents/Home/bin/java
+# VM options: -javaagent:/Applications/IntelliJ IDEA.app/Contents/lib/idea_rt.jar=54393:/Applications/IntelliJ IDEA.app/Contents/bin -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+# Warmup: 2 iterations, 10 s each
+# Measurement: 5 iterations, 10 s each, 2 calls per op
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: jmh_test.Serilaize_Compare.jdkSerializeTest
+
+# Run progress: 50.00% complete, ETA 00:02:21
+# Fork: 1 of 1
+# Warmup Iteration   1: 153430.212 ops/s
+# Warmup Iteration   2: 155457.989 ops/s
+Iteration   1: 78834.139 ops/s
+Iteration   2: 76857.420 ops/s
+Iteration   3: 80452.631 ops/s
+Iteration   4: 78357.467 ops/s
+Iteration   5: 77706.079 ops/s
+
+
+Result "jmh_test.Serilaize_Compare.jdkSerializeTest":
+  78441.547 ±(99.9%) 5186.244 ops/s [Average]
+  (min, avg, max) = (76857.420, 78441.547, 80452.631), stdev = 1346.851
+  CI (99.9%): [73255.303, 83627.791] (assumes normal distribution)
+
+
+# JMH version: 1.21
+# VM version: JDK 22.0.2, Java HotSpot(TM) 64-Bit Server VM, 22.0.2+9-70
+# VM invoker: /Library/Java/JavaVirtualMachines/jdk-22.jdk/Contents/Home/bin/java
+# VM options: -javaagent:/Applications/IntelliJ IDEA.app/Contents/lib/idea_rt.jar=54393:/Applications/IntelliJ IDEA.app/Contents/bin -Dfile.encoding=UTF-8 -Dsun.stdout.encoding=UTF-8 -Dsun.stderr.encoding=UTF-8
+# Warmup: 2 iterations, 10 s each
+# Measurement: 5 iterations, 10 s each, 2 calls per op
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: jmh_test.Serilaize_Compare.kryoSerializeTest
+
+# Run progress: 75.00% complete, ETA 00:01:10
+# Fork: 1 of 1
+# Warmup Iteration   1: 931620.900 ops/s
+# Warmup Iteration   2: 947460.592 ops/s
+Iteration   1: 477972.756 ops/s
+Iteration   2: 479788.920 ops/s
+Iteration   3: 474237.552 ops/s
+Iteration   4: 466959.779 ops/s
+Iteration   5: 465685.045 ops/s
+
+
+Result "jmh_test.Serilaize_Compare.kryoSerializeTest":
+  472928.811 ±(99.9%) 24529.295 ops/s [Average]
+  (min, avg, max) = (465685.045, 472928.811, 479788.920), stdev = 6370.180
+  CI (99.9%): [448399.516, 497458.105] (assumes normal distribution)
+
+
+# Run complete. Total time: 00:04:42
+
+REMEMBER: The numbers below are just data. To gain reusable insights, you need to follow up on
+why the numbers are the way they are. Use profilers (see -prof, -lprof), design factorial
+experiments, perform baseline and negative tests that provide experimental control, make sure
+the benchmarking environment is safe on JVM/OS/HW level, ask for reviews from the domain experts.
+Do not assume the numbers tell you what you want them to tell.
+
+Benchmark                                 Mode  Cnt       Score       Error  Units
+Serilaize_Compare.fastJsonSerializeTest  thrpt    5  875018.146 ± 15131.745  ops/s
+Serilaize_Compare.hessianSerializeTest   thrpt    5  305128.999 ± 25287.578  ops/s
+Serilaize_Compare.jdkSerializeTest       thrpt    5   78441.547 ±  5186.244  ops/s
+Serilaize_Compare.kryoSerializeTest      thrpt    5  472928.811 ± 24529.295  ops/s

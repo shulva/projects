@@ -44,19 +44,22 @@ public class URL {
     public static String build_provider_url(URL url) {//将URL转换为写入zk的provider节点下的一段字符串
         String host = url.get_param().get("host");
         String port = url.get_param().get("port");
-        return new String((url.get_app_name() + ":" + url.get_service_name() + ":" + host + ":"+port+":" + System.currentTimeMillis()).getBytes(), StandardCharsets.UTF_8);
+        return new String((url.get_app_name() + ";" + url.get_service_name() + ";" + host + ":"+port+";" + System.currentTimeMillis()+";100").getBytes(), StandardCharsets.UTF_8);//100是路由权重
     }
 
     public static String build_consumer_url(URL url) {//将URL转换为写入zk的consumer节点下的一段字符串
         String host = url.get_param().get("host");
-        return new String((url.get_app_name() + ":" + url.get_service_name() + ":" + host + ":" + System.currentTimeMillis()).getBytes(), StandardCharsets.UTF_8);
+        return new String((url.get_app_name() + ";" + url.get_service_name() + ";" + host + ";" + System.currentTimeMillis()).getBytes(), StandardCharsets.UTF_8);
     }
 
+    //拆分逻辑是基于build_provider_url来的
     public static provider_node_info build_url_from_urlstr(String provider_node_str) {
         String[] parts = provider_node_str.split("/");
         provider_node_info info = new provider_node_info();
-        info.set_service_name(parts[2]);
-        info.set_address(parts[4]);
+        info.set_service_name(parts[1]);
+        info.set_address(parts[2]);
+        info.set_register_time(parts[3]);
+        info.set_weight(Integer.valueOf(parts[4]));
         return info;
     }
 

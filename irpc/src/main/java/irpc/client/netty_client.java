@@ -2,6 +2,12 @@ package irpc.client;
 
 import com.alibaba.fastjson.JSON;
 
+import core.router.Random_Router;
+import core.router.Rotate_Router;
+import core.serailize.FastJson_Serialize_Facotry;
+import core.serailize.Hessian_Serilaize_Factory;
+import core.serailize.JDK_Serialize_Factory;
+import core.serailize.Kryo_Serialize_Factory;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
@@ -23,13 +29,14 @@ import core.rpc.RPC_encoder;
 import core.rpc.RPC_invocation;
 import core.rpc.RPC_protocol;
 import core.event.Rpc_Listener_Loader;
-import static core.cache.client_cache.SEND_QUEUE;
-import static core.cache.client_cache.subscribe_service_list;
 import core.register.zookeeper.Connection_Handler;
 import core.config.property_bootstrap;
 import core.rpc.common_utils;
 
 import java.util.List;
+
+import static core.cache.client_cache.*;
+import static core.cache.server_cache.SERVER_SERIALIZE_FACTORY;
 
 public class netty_client {
 
@@ -51,6 +58,36 @@ public class netty_client {
 
     public void setClient_config(Client_Config client_config) {
         this.client_config = client_config;
+    }
+
+    public void init_client_config() {
+        this.client_config = property_bootstrap.load_client_config_from_local(); //配置初始化
+        String router = client_config.get_router_strategy();
+        if("random".equals(router)){
+            ROUTER = new Random_Router();
+        }
+        else if("rotate".equals(router)){
+            ROUTER = new Rotate_Router();
+        }
+
+        //serialize在client_handler和发送线程async_send_job中发挥作用
+        String serialize = client_config.get_Serialize();
+        switch (serialize){
+            case "fastJson":
+                CLIENT_SERIALIZE_FACTORY = new FastJson_Serialize_Facotry();
+                break;
+            case "jdk":
+                CLIENT_SERIALIZE_FACTORY = new JDK_Serialize_Factory();
+                break;
+            case "kryo":
+                CLIENT_SERIALIZE_FACTORY = new Kryo_Serialize_Factory();
+                break;
+            case "hessian":
+                CLIENT_SERIALIZE_FACTORY = new Hessian_Serilaize_Factory();
+                break;
+            default:
+                throw new RuntimeException("client no serialize for " + serialize);
+        }
     }
 
     public Bootstrap get_bootstrap() {
@@ -85,7 +122,7 @@ public class netty_client {
          */
         rpc_listener_loader = new Rpc_Listener_Loader();
         rpc_listener_loader.init();
-        this.client_config = property_bootstrap.load_client_config_from_local();
+
         RPC_reference reference = null;
         if ("javassist".equals(client_config.get_proxy_type())) {
             //javaassist proxy , 未实现
@@ -109,18 +146,20 @@ public class netty_client {
 
     //  与provider建立连接
     public void connect_server(){
-        for(String provider_service_name:subscribe_service_list){
-            List<String> provider_ips = abstract_register.get_provider_ip(provider_service_name);
+        for(URL provider_url: SUBSCRIBE_SERVICE_LIST){
+            List<String> provider_ips = abstract_register.get_provider_ip(provider_url.get_service_name());
             for(String provider_ip:provider_ips){
                 try{
-                    Connection_Handler.connect(provider_service_name,provider_ip);
+                    Connection_Handler.connect(provider_url.get_service_name(),provider_ip);
                 } catch (InterruptedException e) {
                     logger.error("[doConnectServer] connect fail ", e);
                 }
             }
 
             URL url = new URL();
-            url.set_service_name(provider_service_name);
+            url.add_param("service_name",provider_url.get_service_name()+"/provider"); //感觉其实不应该叫service_name,service_path比较好
+            url.add_param("provider_ips",JSON.toJSONString(provider_ips));
+            System.out.println(provider_url.get_service_name()+"/provider");
             //客户端在此新增一个订阅的功能
             abstract_register.after_subscribe(url);
         }
@@ -145,10 +184,10 @@ public class netty_client {
             while(true){
                 try {
                     RPC_invocation data = SEND_QUEUE.take();
-                    String json = JSON.toJSONString(data);
-                    RPC_protocol rpc_protocol = new RPC_protocol(json.getBytes());
+                    RPC_protocol rpc_protocol = new RPC_protocol(CLIENT_SERIALIZE_FACTORY.serialize(data));
                     //发送给服务端
                     //System.out.println(JSON.toJSONString(rpc_protocol));
+                    //客户端启动之后并订阅所有服务之后，就会建立与对应服务器之间的连接（channel）(connect函数中），然后在远程调用的时候再选取连接进行调用
                     ChannelFuture channelFuture = Connection_Handler.get_ChannelFuture(data.get_targetServiceName());
                     channelFuture.channel().writeAndFlush(rpc_protocol);
 
@@ -169,6 +208,8 @@ public class netty_client {
              */
 
             netty_client client = new netty_client();
+            client.init_client_config();
+
             RPC_reference reference = client.init_application();
 
             data_service service = reference.getProxy(data_service.class);//获取代理对象，设置缓存信息,用订阅时调用

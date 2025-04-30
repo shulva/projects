@@ -20,7 +20,7 @@ public class service_update_listener implements rpc_listener<rpc_update_event> {
     private static final Logger logger = LoggerFactory.getLogger(service_update_listener.class);
 
     @Override
-    public void callback(Object t) {
+    public void callback(Object t) { //参数t传来的是url_change_wrapper类，zookeeper_register的watch_child_nodedata方法中
         //获取到字节点的数据信息
         url_change_wrapper wrapper = (url_change_wrapper) t;
         List<ChannelFuture_wrapper> channel_future_wrapper_list = CONNECT_CHANNEL_MAP.get(wrapper.get_service_name());

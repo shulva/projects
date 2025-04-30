@@ -1,5 +1,7 @@
 package core.register.zookeeper;
 
+import com.alibaba.fastjson.JSON;
+import core.event.rpc_node_change_event;
 import core.event.rpc_update_event;
 import core.register.URL;
 import core.register.Register_Service;
@@ -79,6 +81,25 @@ public class Zookeeper_Register extends Abstract_Register implements Register_Se
         super.un_subscribe(url);
     }
 
+    //节点数据更新触发,这里是权重
+    public void watch_node_data_change(String new_server_node_path) {
+        client.watch_nodedata(new_server_node_path,new Watcher() {
+
+            @Override
+            public void process(WatchedEvent watchedEvent) {
+                String path = watchedEvent.getPath();
+                String node_data = client.get_nodedata(path);
+                node_data=node_data.replace(";","/");
+
+                //System.out.println("zookeeper register 92,build有可能出错，要注意");
+                provider_node_info provider_node_info = URL.build_url_from_urlstr(node_data);
+                rpc_event event = new rpc_node_change_event(provider_node_info);
+                Rpc_Listener_Loader.send_event(event);
+                watch_node_data_change(new_server_node_path);
+            }
+        });
+    }
+
     public void watch_child_nodedata(String new_server_node_path){
         client.watch_child_nodedata(new_server_node_path,new Watcher() {
             @Override
@@ -101,11 +122,20 @@ public class Zookeeper_Register extends Abstract_Register implements Register_Se
     }
 
     @Override
+    //在客户端和服务提供端建立连接的时候，会触发这个函数，这个函数的内部需要订阅每个Provider目录下节点的变化信息，以及Provider目录下每个子节点自身的数据变动情况。
     public void after_subscribe(URL url) {
         //监听是否有新的服务注册
-        System.out.println("after sub");
-        String newServerNodePath = root + "/" + url.get_service_name() + "/provider";
+        System.out.println("after subscrbie:");
+        String service_path = url.get_param().get("service_name");
+        String newServerNodePath = root + "/" +  service_path;
+
         watch_child_nodedata(newServerNodePath);
+
+        String provider_ip_json = url.get_param().get("provider_ips");
+        List<String> provider_ips = JSON.parseObject(provider_ip_json,List.class);
+        for (String provider_ip : provider_ips){
+            this.watch_node_data_change(root+"/"+service_path+"/"+provider_ip);
+        }
     }
 
     @Override

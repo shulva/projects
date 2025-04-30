@@ -11,8 +11,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.ReferenceCountUtil;
 
-import static core.cache.client_cache.RESP_MAP;
-import static core.cache.client_cache.SEND_QUEUE;
+import static core.cache.client_cache.*;
 
 public class client_handler extends ChannelInboundHandlerAdapter {
     @Override
@@ -23,9 +22,9 @@ public class client_handler extends ChannelInboundHandlerAdapter {
 
         //这里是传输参数更为详细的RpcInvocation对象字节数组。
         byte[] content = protocol.get_content();
-        String json = new String(content,0,content.length);
-
-        RPC_invocation invocation = JSON.parseObject(json, RPC_invocation.class);
+        //String json = new String(content,0,content.length);
+        //RPC_invocation invocation = JSON.parseObject(json, RPC_invocation.class);
+        RPC_invocation invocation = CLIENT_SERIALIZE_FACTORY.deserialize(content,RPC_invocation.class);
         //通过之前发送的uuid来注入匹配的响应数值
 
         if(!RESP_MAP.containsKey(invocation.get_uuid())){ //uuid在client_invocation_handler中提前放入了，没有便是错误

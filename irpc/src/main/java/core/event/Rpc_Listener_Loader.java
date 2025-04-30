@@ -19,8 +19,9 @@ public class Rpc_Listener_Loader {
         rpc_listeners_list.add(rpc_listener);
     }
 
-    public void init(){
+    public void init(){ //如果客户端与服务器是两个机器，那么就需要分别在server和client的main中调用
         register_listener(new service_update_listener());
+        register_listener(new provider_node_data_change_listener());
     }
 
     //获取rpc_listener接口上的泛型T
@@ -42,8 +43,8 @@ public class Rpc_Listener_Loader {
         }
 
         for (rpc_listener<?> rpc_listener : rpc_listeners_list) {
-            Class<?> type = get_interfaceT(event);
-            if(type.equals(event.getClass())){ //确保事件和监听器可以对应上
+            Class<?> type = get_interfaceT(event); //利用反射和泛型
+            if(type.equals(event.getClass())){ //确保传来的事件和监听器可以对应上
                 thread_pool.execute(new Runnable() {
                     @Override
                     public void run() {

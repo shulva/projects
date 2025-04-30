@@ -6,6 +6,16 @@ public class Server_Config {
     private String application_name;
     private String register_address;
 
+    private String Serialize;
+
+    public String get_Serialize() {
+        return Serialize;
+    }
+
+    public void set_Serialize(String Serialize) {
+        this.Serialize = Serialize;
+    }
+
     public Integer getPort() {
         return port;
     }

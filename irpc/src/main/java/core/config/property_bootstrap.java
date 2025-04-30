@@ -10,6 +10,9 @@ public class property_bootstrap {
     public static final String REGISTER_ADDRESS = "rpc.registerAddr";
     public static final String APPLICATION_NAME = "rpc.applicationName";
     public static final String PROXY_TYPE = "rpc.proxyType";
+    public static final String ROUTER_TYPE = "rpc.routerStrategy";
+    public static final String SERVER_SERIALIZE_TYPE = "rpc.serverSerialize";
+    public static final String CLIENT_SERIALIZE_TYPE = "rpc.clientSerialize";
 
     public static Client_Config load_client_config_from_local() {
         try{
@@ -22,6 +25,8 @@ public class property_bootstrap {
         client_config.set_application_name(property_loader.get_property_str(APPLICATION_NAME));
         client_config.set_proxy_type(property_loader.get_property_str(PROXY_TYPE));
         client_config.set_register_address(property_loader.get_property_str(REGISTER_ADDRESS));
+        client_config.set_router_strategy(property_loader.get_property_str(ROUTER_TYPE));
+        client_config.set_Serialize(property_loader.get_property_str(CLIENT_SERIALIZE_TYPE));
 
         return client_config;
     }
@@ -37,6 +42,7 @@ public class property_bootstrap {
         server_config.set_application_name(property_loader.get_property_str(APPLICATION_NAME));
         server_config.set_register_address(property_loader.get_property_str(REGISTER_ADDRESS));
         server_config.setPort(property_loader.get_property_integer(SERVER_PORT));
+        server_config.set_Serialize(property_loader.get_property_str(SERVER_SERIALIZE_TYPE));
 
         return server_config;
     }

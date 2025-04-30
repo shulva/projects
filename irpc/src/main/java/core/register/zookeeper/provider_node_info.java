@@ -6,6 +6,26 @@ public class provider_node_info {
 
     private String address;
 
+    private Integer weight;
+
+    private String register_time;
+
+    public String get_register_time() {
+        return register_time;
+    }
+
+    public void set_register_time(String register_time) {
+        this.register_time = register_time;
+    }
+
+    public Integer get_weight() {
+        return weight;
+    }
+
+    public void set_weight(Integer weight) {
+        this.weight = weight;
+    }
+
     public String get_service_name(){
         return service_name;
     }
@@ -23,10 +43,14 @@ public class provider_node_info {
     }
 
     @Override
-    public String toString() { //?何用意
+    public String toString() {
         return "ProviderNodeInfo{" +
                 "serviceName='" + service_name + '\'' +
                 ", address='" + address + '\'' +
+                ", weight=" + weight +
+                ", registryTime='" + register_time + '\'' +
                 '}';
     }
+
+
 }

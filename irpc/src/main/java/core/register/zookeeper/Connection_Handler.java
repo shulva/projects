@@ -1,5 +1,7 @@
 package core.register.zookeeper;
 
+import core.router.Router;
+import core.router.Selector;
 import core.rpc.ChannelFuture_wrapper;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
@@ -10,8 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import static core.cache.client_cache.CONNECT_CHANNEL_MAP;
-import static core.cache.client_cache.server_address;
+import static core.cache.client_cache.*;
 
 //将对于netty连接的管理操作统一封装在了ConnectionHandler类中
 //当注册中心的节点新增或者移除或者权重变化的时候，这个类主要负责对内存中的url做变更
@@ -48,7 +49,7 @@ public class Connection_Handler {
 
         String host = address[0]; //开vpn时不行
         Integer port = Integer.parseInt(address[1]);
-        System.out.println(host+port);
+        System.out.println(host+":"+port);
 
         ChannelFuture channelFuture = bootstrap.connect(host,port).sync();
         ChannelFuture_wrapper channelFuture_wrapper = new ChannelFuture_wrapper();
@@ -56,17 +57,22 @@ public class Connection_Handler {
         channelFuture_wrapper.setPort(port);
         channelFuture_wrapper.setHost(host);
 
-        server_address.add(ip);
+        SERVER_ADDRESS_SET.add(ip);
         List<ChannelFuture_wrapper> wrappers = CONNECT_CHANNEL_MAP.get(service_name);
         if(common_utils.isEmptyList(wrappers)){
             wrappers = new ArrayList<>();
         }
         wrappers.add(channelFuture_wrapper);
         CONNECT_CHANNEL_MAP.put(service_name,wrappers);
+        //--------------------路由层
+
+        Selector selector = new Selector();
+        selector.set_provider_service_name(service_name);
+        ROUTER.refresh_router_array(selector);
     }
 
     public static void disconnect(String service_name,String ip) throws InterruptedException {
-        server_address.remove(ip);
+        SERVER_ADDRESS_SET.remove(ip);
         List<ChannelFuture_wrapper> wrappers = CONNECT_CHANNEL_MAP.get(service_name);
 
         if (common_utils.isNotEmptyList(wrappers)) {
@@ -89,8 +95,12 @@ public class Connection_Handler {
             throw new RuntimeException("no provider for:"+service_name);
         }
 
-        //随机策略选取
-        ChannelFuture ch = wrappers.get(new Random().nextInt(wrappers.size())).get_ChannelFuture();
+        //-----------------------------------路由层
+        Selector selector = new Selector();
+        selector.set_provider_service_name(service_name);
+        ChannelFuture ch = ROUTER.select(selector).get_ChannelFuture();
+
+        //ChannelFuture ch = wrappers.get(new Random().nextInt(wrappers.size())).get_ChannelFuture();
         return ch;
     }
 

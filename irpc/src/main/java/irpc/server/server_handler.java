@@ -12,6 +12,7 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 import static core.cache.server_cache.PROVIDER_MAP;
+import static core.cache.server_cache.SERVER_SERIALIZE_FACTORY;
 
 public class server_handler extends ChannelInboundHandlerAdapter {
 
@@ -21,8 +22,9 @@ public class server_handler extends ChannelInboundHandlerAdapter {
         System.out.println("--------------------------");
         System.out.println("server接收到数据！");
         RPC_protocol rpc_protocol = (RPC_protocol) msg;
-        String json = new String(rpc_protocol.get_content(),0,rpc_protocol.get_content_len());
-        RPC_invocation rpc_invocation = JSON.parseObject(json,RPC_invocation.class);
+        //String json = new String(rpc_protocol.get_content(),0,rpc_protocol.get_content_len());
+        //RPC_invocation rpc_invocation = JSON.parseObject(json,RPC_invocation.class);
+        RPC_invocation rpc_invocation = SERVER_SERIALIZE_FACTORY.deserialize(rpc_protocol.get_content(), RPC_invocation.class);
 
         Object aim = PROVIDER_MAP.get(rpc_invocation.get_targetServiceName());
 
@@ -42,7 +44,7 @@ public class server_handler extends ChannelInboundHandlerAdapter {
         }
 
         rpc_invocation.set_response(result);
-        RPC_protocol  res_rpc = new RPC_protocol(JSON.toJSONString(rpc_invocation).getBytes());
+        RPC_protocol res_rpc = new RPC_protocol(SERVER_SERIALIZE_FACTORY.serialize(rpc_invocation));
         ctx.writeAndFlush(res_rpc);
     }
 

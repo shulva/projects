@@ -9,8 +9,8 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
-import static core.cache.server_cache.PROVIDER_MAP;
-import static core.cache.server_cache.PROVIDER_URL_SET;
+import core.serailize.*;
+import static core.cache.server_cache.*;
 import core.config.property_bootstrap;
 import core.register.URL;
 import core.register.Register_Service;
@@ -38,6 +38,25 @@ public class netty_server {
     public void init_server_config(){ //从本地property读取配置
         Server_Config server_config = property_bootstrap.load_server_config_from_local() ;//从配置文件中读取
         this.set_config(server_config);
+
+        //serialize在server_handler中发挥作用
+        String serialize = server_config.get_Serialize();
+        switch (serialize){
+            case "fastJson":
+                SERVER_SERIALIZE_FACTORY = new FastJson_Serialize_Facotry();
+                break;
+            case "jdk":
+                SERVER_SERIALIZE_FACTORY = new JDK_Serialize_Factory();
+                break;
+            case "kryo":
+                SERVER_SERIALIZE_FACTORY = new Kryo_Serialize_Factory();
+                break;
+            case "hessian":
+                SERVER_SERIALIZE_FACTORY = new Hessian_Serilaize_Factory();
+                break;
+            default:
+                throw new RuntimeException("server no serialize for " + serialize);
+        }
     }
 
     public void start() throws InterruptedException {
@@ -84,7 +103,6 @@ public class netty_server {
 
         Class interfaceClass = interfaces[0];
         PROVIDER_MAP.put(interfaceClass.getName(), service); // 在此注册服务
-
 
         //引入zookeeper之后
         URL url = new URL();

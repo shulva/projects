@@ -23,6 +23,24 @@ public class Client_Config {
     private String application_name;
     private String register_address;
     private String proxy_type;
+    private String router_strategy;
+    private String Serialize;
+
+    public String get_Serialize() {
+        return Serialize;
+    }
+
+    public void set_Serialize(String Serialize) {
+        this.Serialize = Serialize;
+    }
+
+    public String get_router_strategy(){
+        return router_strategy;
+    }
+
+    public void set_router_strategy(String router_strategy){
+        this.router_strategy = router_strategy;
+    }
 
     public String get_application_name(){
         return application_name;

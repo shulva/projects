@@ -6,7 +6,7 @@ import core.register.URL;
 import java.util.List;
 
 import static core.cache.server_cache.PROVIDER_URL_SET;
-import static core.cache.client_cache.subscribe_service_list;
+import static core.cache.client_cache.SUBSCRIBE_SERVICE_LIST;
 
 public abstract class Abstract_Register implements Register_Service {
 
@@ -22,12 +22,12 @@ public abstract class Abstract_Register implements Register_Service {
 
     @Override
     public void subscribe(URL url){
-        subscribe_service_list.add(url.get_service_name());
+        SUBSCRIBE_SERVICE_LIST.add(url);
     }
 
     @Override
     public void un_subscribe(URL url){
-        subscribe_service_list.remove(url.get_service_name());
+        SUBSCRIBE_SERVICE_LIST.remove(url);
     }
 
     //留给子类扩展
