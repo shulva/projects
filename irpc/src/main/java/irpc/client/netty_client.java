@@ -2,12 +2,12 @@ package irpc.client;
 
 import com.alibaba.fastjson.JSON;
 
+import core.fliter.client_fliter;
 import core.router.Random_Router;
 import core.router.Rotate_Router;
-import core.serailize.FastJson_Serialize_Facotry;
-import core.serailize.Hessian_Serilaize_Factory;
-import core.serailize.JDK_Serialize_Factory;
-import core.serailize.Kryo_Serialize_Factory;
+import core.router.Router;
+import core.serialize.*;
+import core.spi.Extension_Loader;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
@@ -28,16 +28,20 @@ import core.rpc.RPC_encoder;
 import core.rpc.RPC_invocation;
 import core.rpc.RPC_protocol;
 import core.event.Rpc_Listener_Loader;
-import core.register.zookeeper.Connection_Handler;
 import core.config.property_bootstrap;
 import core.rpc.common_utils;
+import core.fliter.client.*;
 
+import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import rpc_interface.data_service;
 import rpc_interface.user_service;
 import static core.cache.client_cache.*;
 import static core.cache.server_cache.SERVER_SERIALIZE_FACTORY;
+import static core.spi.Extension_Loader.extension_loader_class_cache;
 
 public class netty_client {
 
@@ -61,18 +65,41 @@ public class netty_client {
         this.client_config = client_config;
     }
 
-    public void init_client_config() {
+    public void init_client_config() throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         this.client_config = property_bootstrap.load_client_config_from_local(); //配置初始化
+        CLIENT_CONFIG = client_config;
+
         String router = client_config.get_router_strategy();
+        EXTENSION_LOADER.load_extension(Router.class);
+        LinkedHashMap<String, Class> router_map = extension_loader_class_cache.get(Router.class.getName());
+        Class router_class =router_map.get(router);
+        if(router_class==null){
+            throw new RuntimeException("no match router strategy" + router);
+        }
+        ROUTER =(Router)router_class.newInstance();
+
+        /*
         if("random".equals(router)){
             ROUTER = new Random_Router();
         }
         else if("rotate".equals(router)){
             ROUTER = new Rotate_Router();
         }
+        */
+
 
         //serialize在client_handler和发送线程async_send_job中发挥作用
-        String serialize = client_config.get_Serialize();
+
+        String serialize_config = client_config.get_Serialize();
+        EXTENSION_LOADER.load_extension(Serialize_Factory.class);//使用spi加载
+        LinkedHashMap<String, Class> serialize_map = extension_loader_class_cache.get(Serialize_Factory.class.getName());
+        Class serialize_factory_class = serialize_map.get(serialize_config);
+        if(serialize_factory_class==null){
+            throw new RuntimeException("no match serialize type for" + serialize_config);
+        }
+
+        CLIENT_SERIALIZE_FACTORY = (Serialize_Factory)serialize_factory_class.newInstance();
+        /*
         switch (serialize){
             case "fastJson":
                 CLIENT_SERIALIZE_FACTORY = new FastJson_Serialize_Facotry();
@@ -84,11 +111,32 @@ public class netty_client {
                 CLIENT_SERIALIZE_FACTORY = new Kryo_Serialize_Factory();
                 break;
             case "hessian":
-                CLIENT_SERIALIZE_FACTORY = new Hessian_Serilaize_Factory();
+                CLIENT_SERIALIZE_FACTORY = new Hessian_Serialize_Factory();
                 break;
             default:
                 throw new RuntimeException("client no serialize for " + serialize);
+
         }
+
+         */
+
+        EXTENSION_LOADER.load_extension(client_fliter.class);//使用spi加载
+        client_fliter_chain chain = new client_fliter_chain();
+        LinkedHashMap<String, Class> client_fliter_map = extension_loader_class_cache.get(client_fliter.class.getName());
+        for (String class_name : client_fliter_map.keySet()) {
+            Class client_fliter_class = client_fliter_map.get(class_name);
+            if(client_fliter_class==null){
+                throw new RuntimeException("no match fliter type for" + class_name);
+            }
+            chain.add_client_fliter((client_fliter) client_fliter_class.newInstance());
+        }
+        /*
+        chain.add_client_fliter(new Direct_Invoke_Filter());
+        chain.add_client_fliter(new Group_Fliter());
+        chain.add_client_fliter(new Client_Log_Fliter());
+         */
+        CLIENT_FLITER_CHAIN = chain;
+
     }
 
     public Bootstrap get_bootstrap() {
@@ -133,6 +181,7 @@ public class netty_client {
         return reference;
     }
 
+    //启动服务前需要先订阅服务
     public void subscribe_service(Class service){
         if(abstract_register == null){
             abstract_register = new Zookeeper_Register(client_config.get_register_address());
@@ -142,6 +191,8 @@ public class netty_client {
         url.set_app_name(client_config.get_application_name());
         url.set_service_name(service.getName());
         url.add_param("host",common_utils.get_ip_address());
+        Map<String, String> result = abstract_register.get_service_nodeinfo_map(service.getName()); //通过name获取对应的host ip ->provider_node_info 关系
+        URL_MAP.put(service.getName(),result);
         abstract_register.subscribe(url); //订阅服务
     }
 
@@ -189,7 +240,7 @@ public class netty_client {
                     //发送给服务端
                     //System.out.println(JSON.toJSONString(rpc_protocol));
                     //客户端启动之后并订阅所有服务之后，就会建立与对应服务器之间的连接（channel）(connect函数中），然后在远程调用的时候再选取连接进行调用
-                    ChannelFuture channelFuture = Connection_Handler.get_ChannelFuture(data.get_targetServiceName());
+                    ChannelFuture channelFuture = Connection_Handler.get_ChannelFuture(data);
                     channelFuture.channel().writeAndFlush(rpc_protocol);
 
                 } catch (InterruptedException e) {
@@ -210,17 +261,26 @@ public class netty_client {
 
             netty_client client = new netty_client();
             client.init_client_config();
-
             RPC_reference reference = client.init_application();
 
-            data_service service = reference.getProxy(data_service.class);//获取代理对象，设置缓存信息,用订阅时调用
+            RPC_reference_wrapper<data_service> data_reference_wrapper = new RPC_reference_wrapper<>();
+            data_reference_wrapper.set_aim_class(data_service.class);
+            data_reference_wrapper.set_group("dev");
+            data_reference_wrapper.set_service_token("token-a");
+
+            data_service service = reference.getProxy(data_reference_wrapper);//获取代理对象，设置缓存信息,用订阅时调用
             client.subscribe_service(data_service.class);//订阅某个服务，添加到本地缓存subscribe_service_list
 
-            user_service user_service = reference.getProxy(user_service.class);
+
+            RPC_reference_wrapper<user_service> user_reference_wrapper = new RPC_reference_wrapper<>();
+            user_reference_wrapper.set_aim_class(user_service.class);
+            user_reference_wrapper.set_group("test");
+            user_reference_wrapper.set_service_token("token-b");
+
+            user_service service2 = reference.getProxy(user_reference_wrapper);
             client.subscribe_service(user_service.class);
 
             Connection_Handler.set_bootstrap(client.get_bootstrap());
-
             //订阅服务，从subscribe_service_list中获取需要订阅的服务信息，添加注册中心的监听
             //根据服务者生产者信息，建立连接ChannelFuture，将其放入Connect_MAP
             client.connect_server();
@@ -233,7 +293,7 @@ public class netty_client {
                     //异步线程接收到SEND_QUEUE数据，发起netty调用，在invoke方法循环中获取RESP_MAP缓存中的响应数据
                     //在Client_handler中将请求方法和响应数据放入RESP_MAP中
                     String res = service.send_data("hello");
-                    user_service.test(); //不返回数据的
+                    service2.test();
                     System.out.println(res);
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {

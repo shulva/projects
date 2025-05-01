@@ -1,4 +1,4 @@
-package core.serailize;
+package core.serialize;
 
 import java.io.*;
 

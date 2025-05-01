@@ -1,16 +1,17 @@
-package core.register.zookeeper;
+package irpc.client;
 
-import core.router.Router;
+import core.register.URL;
 import core.router.Selector;
 import core.rpc.ChannelFuture_wrapper;
+import core.rpc.RPC_invocation;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import core.rpc.common_utils;
+import core.register.zookeeper.provider_node_info;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 
 import static core.cache.client_cache.*;
 
@@ -51,24 +52,33 @@ public class Connection_Handler {
         Integer port = Integer.parseInt(address[1]);
         System.out.println(host+":"+port);
 
+        String provider_url_info = URL_MAP.get(service_name).get(ip);
+        System.out.println(provider_url_info);
+        provider_node_info node_info = URL.build_url_from_urlstr(provider_url_info.replace(";","/"));
+
         ChannelFuture channelFuture = bootstrap.connect(host,port).sync();
         ChannelFuture_wrapper channelFuture_wrapper = new ChannelFuture_wrapper();
         channelFuture_wrapper.set_ChannelFuture(channelFuture);
         channelFuture_wrapper.setPort(port);
         channelFuture_wrapper.setHost(host);
+        channelFuture_wrapper.set_weight(node_info.get_weight());
+        channelFuture_wrapper.setGroup(node_info.get_group());
 
         SERVER_ADDRESS_SET.add(ip);
         List<ChannelFuture_wrapper> wrappers = CONNECT_CHANNEL_MAP.get(service_name);
         if(common_utils.isEmptyList(wrappers)){
             wrappers = new ArrayList<>();
         }
-        wrappers.add(channelFuture_wrapper);
-        CONNECT_CHANNEL_MAP.put(service_name,wrappers);
-        //--------------------路由层
 
+        wrappers.add(channelFuture_wrapper);
+        //例如com.sise.test.UserService会被放入到一个Map集合中，key是服务的名字，value是对应的channel通道的List集合
+        CONNECT_CHANNEL_MAP.put(service_name,wrappers);
+
+        //--------------------路由层
         Selector selector = new Selector();
         selector.set_provider_service_name(service_name);
         ROUTER.refresh_router_array(selector);
+
     }
 
     public static void disconnect(String service_name,String ip) throws InterruptedException {
@@ -89,11 +99,16 @@ public class Connection_Handler {
     //从注册中心获取服务的地址信息，并且缓存在一个MAP集合中。
     //从缓存的MAP集合中根据服务名称查询到对应的通道List集合。
     //从List集合中随机筛选一个Channel通道，发送数据包。
-    public static ChannelFuture get_ChannelFuture(String service_name) throws InterruptedException {
+    public static ChannelFuture get_ChannelFuture(RPC_invocation invocation) throws InterruptedException {
+        String service_name = invocation.get_targetServiceName();
         List<ChannelFuture_wrapper> wrappers = CONNECT_CHANNEL_MAP.get(service_name);
+        //List<ChannelFuture_wrapper> wrappers = List.of(SERVICE_ROUTER_MAP.get(service_name)); 似乎都可以
         if(common_utils.isEmptyList(wrappers)){
             throw new RuntimeException("no provider for:"+service_name);
         }
+        //-----------------------------------责任链处理
+        // 客户端在获取到目标方的channel集合之后需要进行筛选过滤，最终才会发起真正的请求
+        CLIENT_FLITER_CHAIN.do_fliter(wrappers,invocation);
 
         //-----------------------------------路由层
         Selector selector = new Selector();

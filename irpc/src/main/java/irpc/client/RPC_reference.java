@@ -10,7 +10,7 @@ public class RPC_reference {
         this.proxy_factory = proxy_factory;
     }
 
-    public <T> T getProxy(Class<T> classs) throws Throwable {
-        return proxy_factory.getProxy(classs);
+    public <T> T getProxy(RPC_reference_wrapper<T> reference_wrapper) throws Throwable {
+        return proxy_factory.getProxy(reference_wrapper);
     }
 }

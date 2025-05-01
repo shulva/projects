@@ -1,6 +1,6 @@
 package jmh_test;
 
-import core.serailize.*;
+import core.serialize.*;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
@@ -32,7 +32,7 @@ public class Serilaize_Compare {
 
     @Benchmark
     public void hessianSerializeTest(){
-        Serialize_Factory serializeFactory = new Hessian_Serilaize_Factory();
+        Serialize_Factory serializeFactory = new Hessian_Serialize_Factory();
         User user = buildUserDefault();
         byte[] result = serializeFactory.serialize(user);
         User deserializeUser = serializeFactory.deserialize(result, User.class);

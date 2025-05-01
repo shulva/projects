@@ -4,6 +4,7 @@ import core.register.Register_Service;
 import core.register.URL;
 
 import java.util.List;
+import java.util.Map;
 
 import static core.cache.server_cache.PROVIDER_URL_SET;
 import static core.cache.client_cache.SUBSCRIBE_SERVICE_LIST;
@@ -34,5 +35,6 @@ public abstract class Abstract_Register implements Register_Service {
     public abstract void after_subscribe(URL url);
     public abstract void before_subscribe(URL url);
     public abstract List<String> get_provider_ip(String service_name);
+    public abstract Map<String,String> get_service_nodeinfo_map(String service_name);
 
 }

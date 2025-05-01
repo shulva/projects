@@ -7,7 +7,7 @@ public class ChannelFuture_wrapper { //可能有多个ip,需要记录host和port
     private String host;
     private Integer port;
     private Integer weight; // 路由权重,权重值约定好配置是100的整倍数
-
+    private String group;
 
     public ChannelFuture get_ChannelFuture(){
         return channelFuture;
@@ -49,5 +49,24 @@ public class ChannelFuture_wrapper { //可能有多个ip,需要记录host和port
 
     public void set_weight(Integer weight) {
         this.weight = weight;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
+    }
+
+    @Override
+    public String toString() {
+        return "ChannelFutureWrapper{" +
+                "channelFuture=" + channelFuture +
+                ", host='" + host + '\'' +
+                ", port=" + port +
+                ", weight=" + weight +
+                ", group='" + group + '\'' +
+                '}';
     }
 }

@@ -1,15 +1,13 @@
 package core.proxy;
 
-import core.proxy.proxy_factory;
-import core.proxy.client_invocation_handler;
-
 import java.lang.reflect.Proxy;
+import irpc.client.RPC_reference_wrapper;
 
 
 public class JDK_proxy_factory implements proxy_factory {
 
     @Override
-    public <T> T getProxy(Class classs) throws Throwable {
-        return (T) Proxy.newProxyInstance(classs.getClassLoader(),new Class[]{classs},new client_invocation_handler(classs));
+    public <T> T getProxy(RPC_reference_wrapper reference_wrapper) throws Throwable {
+        return (T) Proxy.newProxyInstance(reference_wrapper.get_aim_class().getClassLoader(),new Class[]{reference_wrapper.get_aim_class()},new JDK_Client_Invocation_Handler(reference_wrapper));
     }
 }

@@ -1,4 +1,4 @@
-package core.serailize;
+package core.serialize;
 
 public interface Serialize_Factory {
     <T> byte[] serialize(T t);

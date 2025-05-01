@@ -1,6 +1,7 @@
 package core.proxy;
 
 import core.rpc.RPC_invocation;
+import irpc.client.RPC_reference_wrapper;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -11,13 +12,13 @@ import static core.cache.client_cache.RESP_MAP;
 import static core.cache.client_cache.SEND_QUEUE;
 
 //核心任务是将需要调用的方法名称、服务名称，参数统统都封装好到RpcInvocation当中，然后塞入到一个队列里，并且等待服务端的数据返回。
-public class client_invocation_handler implements InvocationHandler {
+public class JDK_Client_Invocation_Handler implements InvocationHandler {
 
     private final static Object ob = new Object();
-    private Class<?> any_class;
+    private RPC_reference_wrapper reference_wrapper; //主要的信息还是封装的类
 
-    public client_invocation_handler(Class<?> any_class) {
-        this.any_class = any_class;
+    public JDK_Client_Invocation_Handler(RPC_reference_wrapper reference_wrapper) {
+        this.reference_wrapper = reference_wrapper;
     }
 
     @Override
@@ -25,8 +26,9 @@ public class client_invocation_handler implements InvocationHandler {
         RPC_invocation invocation = new RPC_invocation();
         invocation.set_Args(args);
         invocation.set_TargetMethod(method.getName());
-        invocation.set_TargetServiceName(any_class.getName());
+        invocation.set_TargetServiceName(reference_wrapper.get_aim_class().getName());
         invocation.set_uuid(UUID.randomUUID().toString()); //独特的uuid
+        invocation.set_attachments(reference_wrapper.get_attatchments());
 
         RESP_MAP.put(invocation.get_uuid(),ob); //uuid先占一个ob位，后面client_handler中会真正放入invocation
         SEND_QUEUE.add(invocation);

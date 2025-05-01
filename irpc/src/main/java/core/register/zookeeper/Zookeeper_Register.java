@@ -12,7 +12,9 @@ import rpc_interface.data_service;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 //主要负责的功能是对Zookeeper完成服务注册，服务订阅，服务下线等相关实际操作
 public class Zookeeper_Register extends Abstract_Register implements Register_Service {
@@ -147,6 +149,20 @@ public class Zookeeper_Register extends Abstract_Register implements Register_Se
     public List<String> get_provider_ip(String service_name) {
         List<String> nodeDataList = this.client.get_children_data(root + "/" + service_name + "/provider");
         return nodeDataList;
+    }
+
+    //service name - ip - info的对应关系
+    @Override
+    public Map<String, String> get_service_nodeinfo_map(String service_name) {
+        List<String> nodeDataList = this.client.get_children_data(root + "/" + service_name + "/provider");
+
+        Map<String, String> res = new HashMap<>();
+        for (String host_ip : nodeDataList){
+            String child_data = client.get_nodedata(root + "/" + service_name + "/provider/" + host_ip);
+            res.put(host_ip,child_data);
+        }
+
+        return res;
     }
 
     public static void main(String[] args) throws InterruptedException {

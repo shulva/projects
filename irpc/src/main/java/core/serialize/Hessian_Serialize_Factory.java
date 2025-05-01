@@ -1,4 +1,4 @@
-package core.serailize;
+package core.serialize;
 
 import com.caucho.hessian.io.Hessian2Input;
 import com.caucho.hessian.io.Hessian2Output;
@@ -7,7 +7,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-public class Hessian_Serilaize_Factory implements Serialize_Factory{
+public class Hessian_Serialize_Factory implements Serialize_Factory{
     @Override
     public <T> byte[] serialize(T t) {
 

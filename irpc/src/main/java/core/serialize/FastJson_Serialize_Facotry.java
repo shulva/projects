@@ -1,4 +1,4 @@
-package core.serailize;
+package core.serialize;
 import com.alibaba.fastjson.JSON;
 
 public class FastJson_Serialize_Facotry implements Serialize_Factory{

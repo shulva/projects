@@ -1,4 +1,4 @@
-package core.serailize;
+package core.serialize;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;

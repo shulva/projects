@@ -1,0 +1,4 @@
+kryo=core.serialize.Kryo_Serialize_Factory
+jdk=core.serialize.JDK_Serialize_Factory
+hessian=core.serialize.Hessian_Serialize_Factory
+fastJson=core.serialize.FastJson_Serialize_Facotry

@@ -13,6 +13,7 @@ import java.util.Map;
 
 import static core.cache.server_cache.PROVIDER_MAP;
 import static core.cache.server_cache.SERVER_SERIALIZE_FACTORY;
+import static core.cache.server_cache.SERVER_FLITER_CHAIN;
 
 public class server_handler extends ChannelInboundHandlerAdapter {
 
@@ -26,11 +27,13 @@ public class server_handler extends ChannelInboundHandlerAdapter {
         //RPC_invocation rpc_invocation = JSON.parseObject(json,RPC_invocation.class);
         RPC_invocation rpc_invocation = SERVER_SERIALIZE_FACTORY.deserialize(rpc_protocol.get_content(), RPC_invocation.class);
 
+        //责任链启动
+        SERVER_FLITER_CHAIN.do_fliter(rpc_invocation);
+
         Object aim = PROVIDER_MAP.get(rpc_invocation.get_targetServiceName());
-
         Method methods[] = aim.getClass().getDeclaredMethods();
-
         Object result = null;
+
         for (Method method : methods) {
             if(method.getName().equals(rpc_invocation.get_targetMethod())) {
 

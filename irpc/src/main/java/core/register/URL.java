@@ -44,7 +44,8 @@ public class URL {
     public static String build_provider_url(URL url) {//将URL转换为写入zk的provider节点下的一段字符串
         String host = url.get_param().get("host");
         String port = url.get_param().get("port");
-        return new String((url.get_app_name() + ";" + url.get_service_name() + ";" + host + ":"+port+";" + System.currentTimeMillis()+";100").getBytes(), StandardCharsets.UTF_8);//100是路由权重
+        String group = url.get_param().get("group");
+        return new String((url.get_app_name() + ";" + url.get_service_name() + ";" + host + ":"+port+";" + System.currentTimeMillis()+";100;"+group).getBytes(), StandardCharsets.UTF_8);//100是路由权重
     }
 
     public static String build_consumer_url(URL url) {//将URL转换为写入zk的consumer节点下的一段字符串
@@ -60,6 +61,7 @@ public class URL {
         info.set_address(parts[2]);
         info.set_register_time(parts[3]);
         info.set_weight(Integer.valueOf(parts[4]));
+        info.set_group(String.valueOf(parts[5]));
         return info;
     }
 

@@ -1,5 +1,8 @@
 package core.rpc;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class RPC_invocation {
     //请求的目标方法，例如findUser
     private String targetMethod;
@@ -10,6 +13,16 @@ public class RPC_invocation {
     private String uuid;
     //接口响应的数据塞入这个字段中（如果是异步调用或者void类型，这里就为空）
     private Object response;
+
+    private Map<String, Object> attachments = new ConcurrentHashMap<>();
+
+    public Map<String, Object> get_attachments() {
+        return attachments;
+    }
+
+    public void set_attachments(Map<String, Object> attachments) {
+        this.attachments = attachments;
+    }
 
     //getter setter toString 省略
     public String get_targetMethod() {

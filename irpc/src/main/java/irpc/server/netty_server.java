@@ -1,6 +1,8 @@
 package irpc.server;
 
-import core.register.zookeeper.Zookeeper_Register;
+import core.fliter.client.client_fliter_chain;
+import core.fliter.client_fliter;
+import core.fliter.server_fliter;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -9,8 +11,7 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
-import core.serailize.*;
-import static core.cache.server_cache.*;
+import core.serialize.*;
 import core.config.property_bootstrap;
 import core.register.URL;
 import core.register.Register_Service;
@@ -18,7 +19,15 @@ import core.rpc.RPC_decoder;
 import core.rpc.RPC_encoder;
 import core.config.Server_Config;
 import core.rpc.common_utils;
+import core.fliter.server.*;
+import core.register.zookeeper.Zookeeper_Register;
 
+import java.io.IOException;
+import java.util.LinkedHashMap;
+
+import static core.cache.client_cache.EXTENSION_LOADER;
+import static core.cache.server_cache.*;
+import static core.spi.Extension_Loader.extension_loader_class_cache;
 
 public class netty_server {
 
@@ -35,12 +44,23 @@ public class netty_server {
         this.server_config = server_config;
     }
 
-    public void init_server_config(){ //从本地property读取配置
+    public void init_server_config() throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         Server_Config server_config = property_bootstrap.load_server_config_from_local() ;//从配置文件中读取
         this.set_config(server_config);
+        SERVER_CONFIG = server_config;
 
         //serialize在server_handler中发挥作用
-        String serialize = server_config.get_Serialize();
+        String serialize_config = server_config.get_Serialize();
+        EXTENSION_LOADER.load_extension(Serialize_Factory.class);//使用spi加载
+        LinkedHashMap<String, Class> serialize_map = extension_loader_class_cache.get(Serialize_Factory.class.getName());
+        Class serialize_factory_class = serialize_map.get(serialize_config);
+        if(serialize_factory_class==null){
+            throw new RuntimeException("no match serialize type for" + serialize_config);
+        }
+
+        SERVER_SERIALIZE_FACTORY = (Serialize_Factory)serialize_factory_class.newInstance();
+
+        /* 无需硬编码
         switch (serialize){
             case "fastJson":
                 SERVER_SERIALIZE_FACTORY = new FastJson_Serialize_Facotry();
@@ -52,11 +72,30 @@ public class netty_server {
                 SERVER_SERIALIZE_FACTORY = new Kryo_Serialize_Factory();
                 break;
             case "hessian":
-                SERVER_SERIALIZE_FACTORY = new Hessian_Serilaize_Factory();
+                SERVER_SERIALIZE_FACTORY = new Hessian_Serialize_Factory();
                 break;
             default:
                 throw new RuntimeException("server no serialize for " + serialize);
         }
+
+         */
+
+        server_fliter_chain chain = new server_fliter_chain();
+        EXTENSION_LOADER.load_extension(server_fliter.class);//使用spi加载
+        LinkedHashMap<String, Class> server_fliter_map = extension_loader_class_cache.get(server_fliter.class.getName());
+
+        for (String class_name : server_fliter_map.keySet()) {
+            Class server_fliter_class = server_fliter_map.get(class_name);
+            if(server_fliter_class==null){
+                throw new RuntimeException("no match fliter type for" + class_name);
+            }
+            chain.add_server_fliter((server_fliter) server_fliter_class.newInstance());
+        }
+        /*
+        chain.add_server_fliter(new Server_Token_Fliter());
+        chain.add_server_fliter(new Server_Log_Fliter());
+         */
+        SERVER_FLITER_CHAIN = chain;
     }
 
     public void start() throws InterruptedException {
@@ -75,7 +114,6 @@ public class netty_server {
         bootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
-                System.out.println("初始化providers...");
                 ch.pipeline().addLast(new RPC_encoder());
                 ch.pipeline().addLast(new RPC_decoder());
                 ch.pipeline().addLast(new server_handler());
@@ -88,7 +126,9 @@ public class netty_server {
     }
 
     //暴露服务信息
-    public void register_service(Object service){
+    public void register_service(Service_Wrapper service_wrapper){
+        Object service = service_wrapper.get_service_obj();//还是原来的service类型，只是多了一层wrapper
+
         if(service.getClass().getInterfaces().length==0){
             throw new RuntimeException("service need interface");
         }
@@ -110,9 +150,13 @@ public class netty_server {
         url.set_app_name(server_config.get_application_name());
         url.add_param("host",common_utils.get_ip_address());
         url.add_param("port",String.valueOf(server_config.getPort()));
-        System.out.println(common_utils.get_ip_address());
+        url.add_param("group",String.valueOf(service_wrapper.get_group()));
+        url.add_param("limit",String.valueOf(service_wrapper.get_limit()));
 
-        PROVIDER_URL_SET.add(url);
+        PROVIDER_URL_SET.add(url); // 与export_url中的循环联动
+
+        if(!common_utils.isEmpty(service_wrapper.get_service_token()))
+            PROVIDER_SERVICE_WRAPPER_MAP.put(interfaceClass.getName(), service_wrapper);
 
     }
 
@@ -138,17 +182,26 @@ public class netty_server {
         thread.start();
     }
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         netty_server server = new netty_server();
+        server.init_server_config();
         /* 被init代替
         Server_Config config = new Server_Config();
         config.setPort(9090);
         server.set_config(config);
         */
 
-        server.init_server_config();
-        server.register_service(new data_service_impl()); //通过zookeeper注册
-        server.register_service(new user_service_impl());
+        Service_Wrapper data = new Service_Wrapper(new data_service_impl(),"dev"); //通过zookeeper注册
+        data.set_service_token("token-a");
+        data.set_limit(2);
+
+        Service_Wrapper user = new Service_Wrapper(new user_service_impl(),"test");
+        user.set_service_token("token-b");
+        user.set_limit(2);
+
+        server.register_service(user);
+        server.register_service(data);
+
         server.start();
     }
 }

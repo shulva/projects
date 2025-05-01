@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import core.register.zookeeper.url_change_wrapper;
 import core.rpc.ChannelFuture_wrapper;
 import core.rpc.common_utils;
-import core.register.zookeeper.Connection_Handler;
+import irpc.client.Connection_Handler;
 import static core.cache.client_cache.CONNECT_CHANNEL_MAP;
 
 import java.util.ArrayList;

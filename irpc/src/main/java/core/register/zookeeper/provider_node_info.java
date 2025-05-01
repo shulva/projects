@@ -10,6 +10,16 @@ public class provider_node_info {
 
     private String register_time;
 
+    private String group;
+
+    public String get_group() {
+        return group;
+    }
+
+    public void set_group(String group) {
+        this.group = group;
+    }
+
     public String get_register_time() {
         return register_time;
     }
@@ -49,6 +59,7 @@ public class provider_node_info {
                 ", address='" + address + '\'' +
                 ", weight=" + weight +
                 ", registryTime='" + register_time + '\'' +
+                ", group='" + group + '\'' +
                 '}';
     }
 
