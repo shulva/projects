@@ -11,44 +11,22 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
 
-import static core.cache.server_cache.PROVIDER_MAP;
-import static core.cache.server_cache.SERVER_SERIALIZE_FACTORY;
-import static core.cache.server_cache.SERVER_FLITER_CHAIN;
+import static core.cache.server_cache.*;
 
 public class server_handler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws InvocationTargetException, IllegalAccessException { //服务器接收到客户端发送的数据时会触发该方法
-        //服务端接收数据的时候统一以RpcProtocol协议的格式接收
-        System.out.println("--------------------------");
-        System.out.println("server接收到数据！");
-        RPC_protocol rpc_protocol = (RPC_protocol) msg;
-        //String json = new String(rpc_protocol.get_content(),0,rpc_protocol.get_content_len());
-        //RPC_invocation rpc_invocation = JSON.parseObject(json,RPC_invocation.class);
-        RPC_invocation rpc_invocation = SERVER_SERIALIZE_FACTORY.deserialize(rpc_protocol.get_content(), RPC_invocation.class);
 
-        //责任链启动
-        SERVER_FLITER_CHAIN.do_fliter(rpc_invocation);
-
-        Object aim = PROVIDER_MAP.get(rpc_invocation.get_targetServiceName());
-        Method methods[] = aim.getClass().getDeclaredMethods();
-        Object result = null;
-
-        for (Method method : methods) {
-            if(method.getName().equals(rpc_invocation.get_targetMethod())) {
-
-                if(method.getReturnType().equals(Void.TYPE)) {
-                    method.invoke(aim,rpc_invocation.get_Args());
-                }
-                else
-                    result = method.invoke(aim,rpc_invocation.get_Args());
-            }
-            break;
-        }
-
-        rpc_invocation.set_response(result);
-        RPC_protocol res_rpc = new RPC_protocol(SERVER_SERIALIZE_FACTORY.serialize(rpc_invocation));
-        ctx.writeAndFlush(res_rpc);
+        //服务端接收数据的时候统一以 RpcProtocol 协议的格式接收
+        //不直接处理业务逻辑。
+        //将接收到的 RPC_protocol 数据和 ChannelHandlerContext 封装成一个对象。
+        //将这个封装好的请求对象放入 RPC_READ_QUEUE 阻塞队列中。
+        //尽快释放 Netty 的 I/O 线程，让其可以继续处理其他网络事件（如接受新连接、读写更多数据）。
+        server_channel_read data=new server_channel_read();
+        data.setRpcProtocol((RPC_protocol) msg);
+        data.setChannelHandlerContext(ctx);
+        SERVER_CHANNEL_DISPATCHER.add(data);
     }
 
     @Override

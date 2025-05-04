@@ -8,6 +8,37 @@ public class Server_Config {
 
     private String Serialize;
 
+    private Integer serverBizThreadNums;
+
+    private Integer serverQueueSize;//服务端接收队列的大小
+
+    private Integer max_connections;
+
+    public Integer getMax_connections() {
+        return max_connections;
+    }
+
+    public void setMax_connections(Integer max_connections) {
+        this.max_connections = max_connections;
+    }
+
+    public Integer getServerQueueSize() {
+        return serverQueueSize;
+    }
+
+    public void setServerQueueSize(Integer serverQueueSize) {
+        this.serverQueueSize = serverQueueSize;
+    }
+
+    public Integer getServerBizThreadNums() {
+        return serverBizThreadNums;
+    }
+
+    public void setServerBizThreadNums(Integer serverBizThreadNums) {
+        this.serverBizThreadNums = serverBizThreadNums;
+    }
+
+
     public String get_Serialize() {
         return Serialize;
     }

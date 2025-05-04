@@ -11,6 +11,26 @@ public class RPC_reference_wrapper<T> {
     //信息中心
     private Map<String,Object> attatchments = new ConcurrentHashMap<>();
 
+    public void setTimeOut(int timeOut) {
+        attatchments.put("timeOut", timeOut);
+    }
+
+    public String getTimeOUt() {
+        return String.valueOf(attatchments.get("timeOut"));
+    }
+
+    public int getRetry(){ //重传机制
+        if(attatchments.get("retry")==null){
+            return 0;
+        }else {
+            return (int) attatchments.get("retry");
+        }
+    }
+
+    public void setRetry(int retry){
+        this.attatchments.put("retry",retry);
+    }
+
     public Class<T> get_aim_class() {
         return aim_class;
     }
@@ -23,7 +43,7 @@ public class RPC_reference_wrapper<T> {
         return Boolean.valueOf(String.valueOf(attatchments.get("async")));
     }
 
-    public void set_async(boolean async){
+    public void set_async(boolean async){  //这个值用在JDK proxy里面
         this.attatchments.put("async",async);
     }
 

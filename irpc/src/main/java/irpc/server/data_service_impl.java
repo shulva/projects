@@ -1,9 +1,11 @@
 package irpc.server;
 import rpc_interface.data_service;
+import starter.Anno_Rpc_Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Anno_Rpc_Service
 public class data_service_impl implements data_service{
     @Override
     public String send_data(String data) {

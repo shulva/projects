@@ -66,7 +66,8 @@ public class netty_client {
     }
 
     public void init_client_config() throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
-        this.client_config = property_bootstrap.load_client_config_from_local(); //配置初始化
+        Client_Config client_config =  property_bootstrap.load_client_config_from_local(); //配置初始化
+        this.setClient_config(client_config);
         CLIENT_CONFIG = client_config;
 
         String router = client_config.get_router_strategy();
@@ -218,7 +219,7 @@ public class netty_client {
     }
 
     //发送线程，专门将数据包发送给服务端
-    private void start_client() {
+    public void start_client() {
         Thread async_send_thread = new Thread(new async_send_job());
         async_send_thread.start();
     }
@@ -267,6 +268,9 @@ public class netty_client {
             data_reference_wrapper.set_aim_class(data_service.class);
             data_reference_wrapper.set_group("dev");
             data_reference_wrapper.set_service_token("token-a");
+            data_reference_wrapper.set_async(false);//需要接受返回
+            data_reference_wrapper.setTimeOut(3000);
+            data_reference_wrapper.setRetry(0); //超时重传次数
 
             data_service service = reference.getProxy(data_reference_wrapper);//获取代理对象，设置缓存信息,用订阅时调用
             client.subscribe_service(data_service.class);//订阅某个服务，添加到本地缓存subscribe_service_list
@@ -276,6 +280,9 @@ public class netty_client {
             user_reference_wrapper.set_aim_class(user_service.class);
             user_reference_wrapper.set_group("test");
             user_reference_wrapper.set_service_token("token-b");
+            user_reference_wrapper.set_async(true);//不需要接受返回
+            user_reference_wrapper.setTimeOut(3000);
+            user_reference_wrapper.setRetry(0); //超时重传次数
 
             user_service service2 = reference.getProxy(user_reference_wrapper);
             client.subscribe_service(user_service.class);

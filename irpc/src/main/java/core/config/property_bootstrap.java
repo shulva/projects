@@ -13,6 +13,9 @@ public class property_bootstrap {
     public static final String ROUTER_TYPE = "rpc.routerStrategy";
     public static final String SERVER_SERIALIZE_TYPE = "rpc.serverSerialize";
     public static final String CLIENT_SERIALIZE_TYPE = "rpc.clientSerialize";
+    public static final String SERVER_QUEUE_SIZE = "rpc.serverQueueSize";
+    public static final String SERVER_THREAD_NUMS = "rpc.serverThreadNums";
+    public static final String MAX_CONNECT = "rpc.maxConnect";
 
     public static Client_Config load_client_config_from_local() {
         try{
@@ -43,6 +46,10 @@ public class property_bootstrap {
         server_config.set_register_address(property_loader.get_property_str(REGISTER_ADDRESS));
         server_config.setPort(property_loader.get_property_integer(SERVER_PORT));
         server_config.set_Serialize(property_loader.get_property_str(SERVER_SERIALIZE_TYPE));
+        server_config.setServerQueueSize(Integer.parseInt(property_loader.get_property_str(SERVER_QUEUE_SIZE)));
+        server_config.setServerBizThreadNums(Integer.parseInt(property_loader.get_property_str(SERVER_THREAD_NUMS)));
+        server_config.setMax_connections(Integer.parseInt(property_loader.get_property_str(MAX_CONNECT)));
+
 
         return server_config;
     }

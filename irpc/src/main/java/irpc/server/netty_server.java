@@ -21,6 +21,8 @@ import core.config.Server_Config;
 import core.rpc.common_utils;
 import core.fliter.server.*;
 import core.register.zookeeper.Zookeeper_Register;
+import core.fliter.server.Server_Before_Limit_Fliter;
+import core.fliter.server.Server_After_Limit_Fliter;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
@@ -48,6 +50,8 @@ public class netty_server {
         Server_Config server_config = property_bootstrap.load_server_config_from_local() ;//从配置文件中读取
         this.set_config(server_config);
         SERVER_CONFIG = server_config;
+
+        SERVER_CHANNEL_DISPATCHER.init(SERVER_CONFIG.getServerQueueSize(),SERVER_CONFIG.getServerBizThreadNums());
 
         //serialize在server_handler中发挥作用
         String serialize_config = server_config.get_Serialize();
@@ -80,10 +84,13 @@ public class netty_server {
 
          */
 
+        //-------------------责任链
         server_fliter_chain chain = new server_fliter_chain();
         EXTENSION_LOADER.load_extension(server_fliter.class);//使用spi加载
         LinkedHashMap<String, Class> server_fliter_map = extension_loader_class_cache.get(server_fliter.class.getName());
 
+
+        chain.add_server_fliter(new Server_Before_Limit_Fliter());
         for (String class_name : server_fliter_map.keySet()) {
             Class server_fliter_class = server_fliter_map.get(class_name);
             if(server_fliter_class==null){
@@ -91,6 +98,8 @@ public class netty_server {
             }
             chain.add_server_fliter((server_fliter) server_fliter_class.newInstance());
         }
+        chain.add_server_fliter(new Server_After_Limit_Fliter());
+
         /*
         chain.add_server_fliter(new Server_Token_Fliter());
         chain.add_server_fliter(new Server_Log_Fliter());
@@ -111,6 +120,8 @@ public class netty_server {
                 .option(ChannelOption.SO_RCVBUF, 16 * 1024)
                 .option(ChannelOption.SO_KEEPALIVE, true);
 
+        bootstrap.handler(new Max_Connect_Handler(server_config.getMax_connections())); //限制连接数量
+
         bootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
@@ -120,6 +131,8 @@ public class netty_server {
             }
         });
 
+        //开启监听服务
+        SERVER_CHANNEL_DISPATCHER.start_data_consume();
         this.export_url();
         bootstrap.bind(server_config.getPort()).sync();
 
@@ -141,7 +154,7 @@ public class netty_server {
         if(register_service==null)
             register_service = new Zookeeper_Register(server_config.get_register_address());
 
-        Class interfaceClass = interfaces[0];
+        Class interfaceClass = interfaces[0];//服务名,默认选择该对象的第一个实现的接口
         PROVIDER_MAP.put(interfaceClass.getName(), service); // 在此注册服务
 
         //引入zookeeper之后
@@ -154,6 +167,8 @@ public class netty_server {
         url.add_param("limit",String.valueOf(service_wrapper.get_limit()));
 
         PROVIDER_URL_SET.add(url); // 与export_url中的循环联动
+        //限制单个服务请求连接的数量
+        SERVER_SERVICE_SEMAPHORE_MAP.put(interfaceClass.getName(),new Server_Semaphore_Wrapper(service_wrapper.get_limit()));
 
         if(!common_utils.isEmpty(service_wrapper.get_service_token()))
             PROVIDER_SERVICE_WRAPPER_MAP.put(interfaceClass.getName(), service_wrapper);

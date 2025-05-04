@@ -27,6 +27,17 @@ public class client_handler extends ChannelInboundHandlerAdapter {
         RPC_invocation invocation = CLIENT_SERIALIZE_FACTORY.deserialize(content,RPC_invocation.class);
         //通过之前发送的uuid来注入匹配的响应数值
 
+        if(invocation.get_exception()!=null){
+            invocation.get_exception().printStackTrace(); //打印出服务端的异常
+        }
+
+        //如果是async模式不需要返回值的话，响应Map集合中不会存在映射值
+        Object r = invocation.get_attachments().get("async");
+        if (r != null && Boolean.valueOf(String.valueOf(r))) {
+            ReferenceCountUtil.release(msg);
+            return;
+        }
+
         if(!RESP_MAP.containsKey(invocation.get_uuid())){ //uuid在client_invocation_handler中提前放入了，没有便是错误
             throw new IllegalArgumentException("server response wrong");
         }

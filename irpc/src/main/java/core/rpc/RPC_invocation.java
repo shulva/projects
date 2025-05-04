@@ -14,6 +14,27 @@ public class RPC_invocation {
     //接口响应的数据塞入这个字段中（如果是异步调用或者void类型，这里就为空）
     private Object response;
 
+    private Throwable exception;//服务端异常正常返回
+    //exception内容很可能过大
+
+    private int retry;//重传次数
+
+    public int get_retry() {
+        return retry;
+    }
+
+    public void set_retry(int retry) {
+        this.retry = retry;
+    }
+
+    public void set_exception(Throwable exception) {
+        this.exception = exception;
+    }
+
+    public Throwable get_exception() {
+        return exception;
+    }
+
     private Map<String, Object> attachments = new ConcurrentHashMap<>();
 
     public Map<String, Object> get_attachments() {
