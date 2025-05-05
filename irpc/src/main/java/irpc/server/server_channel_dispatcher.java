@@ -28,9 +28,12 @@ public class server_channel_dispatcher {
 
     public void init(int queueSize, int bizThreadNums) {
         RPC_READ_QUEUE = new ArrayBlockingQueue<>(queueSize);
-        executor_service = new ThreadPoolExecutor(bizThreadNums, bizThreadNums,
-                0L, TimeUnit.MILLISECONDS,
-                new ArrayBlockingQueue<>(512));
+        //executor_service = new ThreadPoolExecutor(bizThreadNums, bizThreadNums,
+        //        0L, TimeUnit.MILLISECONDS,
+        //        new ArrayBlockingQueue<>(512));
+        executor_service = new ThreadPoolExecutor(0, Integer.MAX_VALUE,
+                60L, TimeUnit.MILLISECONDS,
+                new SynchronousQueue<>(),  Executors.defaultThreadFactory());
     }
 
     public void add(server_channel_read data) {
@@ -64,7 +67,7 @@ public class server_channel_dispatcher {
 
                                 //责任链启动
                                 try{
-                                    SERVER_FLITER_CHAIN.do_fliter(rpc_invocation);
+                                    SERVER_BEFORE_FLITER_CHAIN.do_fliter(rpc_invocation);
                                 }
                                 catch (Exception e){
                                     rpc_invocation.set_exception(e);
@@ -100,6 +103,7 @@ public class server_channel_dispatcher {
                                     }
                                 }
 
+                                SERVER_AFTER_FLITER_CHAIN.do_fliter(rpc_invocation);
                                 rpc_invocation.set_response(result);//获取到结果
                                 RPC_protocol res_rpc = new RPC_protocol(SERVER_SERIALIZE_FACTORY.serialize(rpc_invocation));//序列化
                                 data.getChannelHandlerContext().writeAndFlush(res_rpc);

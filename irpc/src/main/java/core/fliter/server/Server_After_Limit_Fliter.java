@@ -4,6 +4,7 @@ import core.fliter.server_fliter;
 import core.rpc.RPC_invocation;
 import static core.cache.server_cache.SERVER_SERVICE_SEMAPHORE_MAP;
 
+@SPI(value = "after")
 public class Server_After_Limit_Fliter implements server_fliter{
 
 

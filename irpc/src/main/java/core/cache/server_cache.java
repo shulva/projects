@@ -20,7 +20,8 @@ public class server_cache {
     //------------------------------序列化
     public static Serialize_Factory SERVER_SERIALIZE_FACTORY;
     //------------------------------责任链模式
-    public static server_fliter_chain SERVER_FLITER_CHAIN;
+    public static server_fliter_chain SERVER_BEFORE_FLITER_CHAIN;
+    public static server_fliter_chain SERVER_AFTER_FLITER_CHAIN;
     public static Server_Config SERVER_CONFIG;
     public static Map<String, Service_Wrapper> PROVIDER_SERVICE_WRAPPER_MAP = new ConcurrentHashMap<>();
     public static server_channel_dispatcher SERVER_CHANNEL_DISPATCHER = new server_channel_dispatcher();

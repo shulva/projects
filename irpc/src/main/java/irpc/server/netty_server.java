@@ -85,26 +85,33 @@ public class netty_server {
          */
 
         //-------------------责任链
-        server_fliter_chain chain = new server_fliter_chain();
+        server_fliter_chain after_chain = new server_fliter_chain();
+        server_fliter_chain before_chain = new server_fliter_chain();
+
         EXTENSION_LOADER.load_extension(server_fliter.class);//使用spi加载
         LinkedHashMap<String, Class> server_fliter_map = extension_loader_class_cache.get(server_fliter.class.getName());
 
-
-        chain.add_server_fliter(new Server_Before_Limit_Fliter());
         for (String class_name : server_fliter_map.keySet()) {
             Class server_fliter_class = server_fliter_map.get(class_name);
             if(server_fliter_class==null){
                 throw new RuntimeException("no match fliter type for" + class_name);
             }
-            chain.add_server_fliter((server_fliter) server_fliter_class.newInstance());
+            SPI spi = (SPI)server_fliter_class.getDeclaredAnnotation(SPI.class);
+
+            if (spi != null && "before".equals(spi.value())) {
+                before_chain.add_server_fliter((server_fliter) server_fliter_class.newInstance());
+            } else if (spi != null && "after".equals(spi.value())) {
+                after_chain.add_server_fliter((server_fliter) server_fliter_class.newInstance());
+            }
         }
-        chain.add_server_fliter(new Server_After_Limit_Fliter());
 
         /*
         chain.add_server_fliter(new Server_Token_Fliter());
         chain.add_server_fliter(new Server_Log_Fliter());
          */
-        SERVER_FLITER_CHAIN = chain;
+
+        SERVER_BEFORE_FLITER_CHAIN = before_chain;
+        SERVER_AFTER_FLITER_CHAIN = after_chain;
     }
 
     public void start() throws InterruptedException {

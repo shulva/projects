@@ -12,6 +12,7 @@ import java.util.List;
 import static core.cache.client_cache.CLIENT_CONFIG;
 
 //服务器端日志记录
+@SPI(value = "before")
 public class Server_Log_Fliter implements server_fliter{
 
     private static final Logger logger = LoggerFactory.getLogger(Server_Log_Fliter.class);

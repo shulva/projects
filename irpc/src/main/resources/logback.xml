@@ -2,8 +2,18 @@
 <configuration>
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
         <file>logs/application.log</file>
+                <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- 归档文件名模式，每天滚动，并压缩 -->
+            <fileNamePattern>logs/my-app-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <!-- 每个日志文件最大 100MB -->
+            <maxFileSize>100MB</maxFileSize>
+            <!-- 最多保留 30 天的日志 -->
+            <maxHistory>30</maxHistory>
+            <!-- 所有归档文件总大小限制 -->
+            <totalSizeCap>10GB</totalSizeCap>
+        </rollingPolicy>
         <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 

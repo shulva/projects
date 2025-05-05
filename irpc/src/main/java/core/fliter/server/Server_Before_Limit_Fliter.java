@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.Semaphore;
 
 
+@SPI(value = "before")
 public class Server_Before_Limit_Fliter implements server_fliter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Server_Before_Limit_Fliter.class);
