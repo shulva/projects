@@ -1,9 +1,0 @@
-0.7
-2020.2
-Oct 14 2022
-05:20:55
-D:/others/projects/jichuang/CRC/CRC.sim/sim_1/behav/xsim/glbl.v,1544155481,verilog,,,,glbl,,,,,,,,
-D:/others/projects/jichuang/CRC/CRC.srcs/sim_1/new/tb_crc_top.v,1715594872,verilog,,,,tb_crc_top,,,,,,,,
-D:/others/projects/jichuang/CRC/CRC.srcs/sources_1/new/CRC_top.v,1719817805,verilog,,D:/others/projects/jichuang/CRC/CRC.srcs/sources_1/new/circular_queue.v,,CRC_top,,,,,,,,
-D:/others/projects/jichuang/CRC/CRC.srcs/sources_1/new/circular_queue.v,1719811302,verilog,,D:/others/projects/jichuang/CRC/CRC.srcs/sources_1/new/crc_new.v,,circular_queue,,,,,,,,
-D:/others/projects/jichuang/CRC/CRC.srcs/sources_1/new/crc_new.v,1719811810,verilog,,D:/others/projects/jichuang/CRC/CRC.srcs/sim_1/new/tb_crc_top.v,,crc_new,,,,,,,,

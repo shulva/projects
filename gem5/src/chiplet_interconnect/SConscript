@@ -1,0 +1,20 @@
+# SCons 构建脚本
+# 用于编译 chiplet_interconnect 目录下的 C++ SimObject 源代码
+
+Import('*')
+
+# 定义源文件列表
+sources = [
+    'protocol_endpoints/PCIeEndpoint.cc',
+    'protocol_endpoints/CXLEndpoint.cc',
+    'protocol_endpoints/UCIeEndpoint.cc',
+    'interconnect_fabric/SimpleChipletLink.cc',
+    'interconnect_fabric/UnifiedLinkLayer.cc',
+    'converter/ProtocolConverter.cc',
+]
+
+# 注册 SimObject
+for src in sources:
+    SimObject(src[:-3] + '.py', src) # 假设 .py 文件与 .cc 文件同名
+
+# (后续可能需要添加库依赖等)
