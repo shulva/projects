@@ -73,7 +73,7 @@ public class netty_client {
         String router = client_config.get_router_strategy();
         EXTENSION_LOADER.load_extension(Router.class);
         LinkedHashMap<String, Class> router_map = extension_loader_class_cache.get(Router.class.getName());
-        Class router_class =router_map.get(router);
+        Class router_class =router_map.get(router);//通过config获取
         if(router_class==null){
             throw new RuntimeException("no match router strategy" + router);
         }

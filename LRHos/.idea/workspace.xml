@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="492c7c73-a218-4584-b440-689a0d2babb7" name="更改" comment="">
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/lib/thread.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/thread.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/.idea/leetcode.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/1.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/2.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/3.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/.cmake/api/v1/query/cache-v2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/.cmake/api/v1/query/cmakeFiles-v1" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/.cmake/api/v1/query/codemodel-v2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/.cmake/api/v1/query/toolchains-v1" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/.cmake/api/v1/reply/cache-v2-7d155e3bf4926958595a.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/.cmake/api/v1/reply/cmakeFiles-v1-1dfa024deff13a14fc8b.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/.cmake/api/v1/reply/codemodel-v2-a8ad344dd0e13d93705c.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/.cmake/api/v1/reply/directory-.-Debug-f5ebdc15457944623624.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/.cmake/api/v1/reply/index-2024-09-06T02-29-11-0119.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/.cmake/api/v1/reply/target-leetcode-Debug-93b5257ff2c350c271c3.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/.cmake/api/v1/reply/toolchains-v1-bb57840159693364638b.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/.ninja_deps" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/.ninja_log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/CMakeCache.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/CMakeFiles/3.28.1/CMakeCCompiler.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/CMakeFiles/3.28.1/CMakeCXXCompiler.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/CMakeFiles/3.28.1/CMakeDetermineCompilerABI_C.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/CMakeFiles/3.28.1/CMakeDetermineCompilerABI_CXX.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/CMakeFiles/3.28.1/CMakeSystem.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/CMakeFiles/3.28.1/CompilerIdC/CMakeCCompilerId.c" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/CMakeFiles/3.28.1/CompilerIdC/CMakeCCompilerId.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/CMakeFiles/3.28.1/CompilerIdCXX/CMakeCXXCompilerId.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/CMakeFiles/3.28.1/CompilerIdCXX/CMakeCXXCompilerId.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/CMakeFiles/CMakeConfigureLog.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/CMakeFiles/TargetDirectories.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/CMakeFiles/clion-Debug-log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/CMakeFiles/clion-environment.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/CMakeFiles/cmake.check_cache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/CMakeFiles/leetcode.dir/1.cpp.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/CMakeFiles/leetcode.dir/2.cpp.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/CMakeFiles/leetcode.dir/3.cpp.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/CMakeFiles/leetcode.dir/test.cpp.o" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/CMakeFiles/rules.ninja" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/Testing/Temporary/LastTest.log" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/build.ninja" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/cmake_install.cmake" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/cmake-build-debug/leetcode" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../leetcode/test.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../video_search/.idea/video_search.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../video_search/.idea/video_search.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../video_search/video_search.py" beforeDir="false" afterPath="$PROJECT_DIR$/../video_search/video_search.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
+  <component name="ProjectId" id="2unmrNGnQP5V8Sl1CrzH4jDG3Jr" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/shulva/Documents/projects/LRHos&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="默认任务">
+      <changelist id="492c7c73-a218-4584-b440-689a0d2babb7" name="更改" comment="" />
+      <created>1742892911896</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1742892911896</updated>
+      <workItem from="1742892912932" duration="855000" />
+      <workItem from="1742895154416" duration="108000" />
+      <workItem from="1742895691126" duration="1941000" />
+      <workItem from="1742975475192" duration="7216000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
