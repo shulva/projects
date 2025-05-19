@@ -3,7 +3,7 @@
  * PCIe链路层实现文件
  */
 
-#include "protocol_converter/link_layer/PCIeLinkLayer.hh"
+#include "expr/protocol_converter/link_layer/PCIeLinkLayer.hh"
 #include "base/trace.hh"
 #include "debug/PCIeLinkLayer.hh"
 #include "params/PCIeLinkLayer.hh"
@@ -12,14 +12,16 @@
 namespace gem5 {
 
 // 注册调试标志
-Trace::CreateDebugFlag("PCIeLinkLayer", "PCIe链路层调试信息");
 
 PCIeLinkLayer::PCIeLinkLayer(const PCIeLinkLayerParams &p)
     : SimObject(p),
       nextTxSequenceNumber(0),
       expectedRxSequenceNumber(0),
       phyCallback(nullptr),
-      protocolCallback(nullptr)
+      protocolCallback(nullptr),
+      flowControlUpdateIntervalTicks(p.flowControlUpdateInterval),
+      retryTimeoutTicks(p.retryTimeout),
+      maxRetriesCount(p.maxRetries)
 {
     // 初始化接收缓冲区
     rxBuffer.maxSize = p.rxBufferSize;
@@ -33,8 +35,10 @@ PCIeLinkLayer::PCIeLinkLayer(const PCIeLinkLayerParams &p)
     txFlowControl.availableCredits = p.initialTxCredits;
     rxFlowControl.availableCredits = p.initialRxCredits;
     
-    DPRINTF(PCIeLinkLayer, "PCIe链路层创建: rxBufferSize=%d, txBufferSize=%d\n", 
-            p.rxBufferSize, p.txBufferSize);
+    DPRINTF(PCIeLinkLayer, "PCIe链路层创建: rxBufferSize=%d, txBufferSize=%d, "
+            "flowControlUpdateInterval=%llu ticks, retryTimeout=%llu ticks, maxRetries=%d\n", 
+            p.rxBufferSize, p.txBufferSize,
+            flowControlUpdateIntervalTicks, retryTimeoutTicks, maxRetriesCount);
 }
 
 void 
@@ -56,12 +60,12 @@ PCIeLinkLayer::startup()
     // 流控更新事件
     schedule(new EventFunctionWrapper([this]{ periodicFlowControlUpdate(); }, 
                                      name() + ".flowControlEvent", true), 
-             curTick() + 1000);  // 1000个周期后触发
+             curTick() + flowControlUpdateIntervalTicks);
     
     // 重传超时事件
     schedule(new EventFunctionWrapper([this]{ handleRetryTimeout(); }, 
                                      name() + ".retryTimeoutEvent", true), 
-             curTick() + 5000);  // 5000个周期后触发
+             curTick() + retryTimeoutTicks);
     
     DPRINTF(PCIeLinkLayer, "PCIe链路层启动\n");
 }
@@ -70,7 +74,7 @@ bool
 PCIeLinkLayer::processTLP(PCIe::TLP* tlp)
 {
     // 处理来自协议层的TLP
-    DPRINTF(PCIeLinkLayer, "处理来自协议层的TLP: %s\n", tlp->toString().c_str());
+    DPRINTF(PCIeLinkLayer, "处理来自协议层的TLP \n");
     
     // 检查发送缓冲区是否有空间
     if (txBuffer.currentSize >= txBuffer.maxSize) {
@@ -255,12 +259,15 @@ PCIeLinkLayer::sendDataDLP(DataDLP* dataDlp)
     
     // 如果有物理层回调，则调用
     if (phyCallback) {
-        bool result = phyCallback(dataDlp);
+        /*TODO:不同的包需要有不同的解决方案
+        //bool result = phyCallback(dataDlp);
         
+
         if (!result) {
             DPRINTF(PCIeLinkLayer, "物理层发送DLP失败\n");
             return false;
         }
+            */
     } else {
         DPRINTF(PCIeLinkLayer, "物理层回调未设置，无法发送DLP\n");
         return false;
@@ -280,12 +287,14 @@ PCIeLinkLayer::sendControlDLLP(ControlDLLP* controlDllp)
     
     // 如果有物理层回调，则调用
     if (phyCallback) {
-        bool result = phyCallback(controlDllp);
+        /*TODO:不同的包需要有不同的解决方案
+        //bool result = phyCallback(controlDllp);
         
         if (!result) {
             DPRINTF(PCIeLinkLayer, "物理层发送DLLP失败\n");
             return false;
         }
+            */
     } else {
         DPRINTF(PCIeLinkLayer, "物理层回调未设置，无法发送DLLP\n");
         return false;
@@ -421,11 +430,11 @@ PCIeLinkLayer::calculateLCRC(DataDLP* dataDlp)
     if (dataDlp->tlp) {
         // 这里应该对TLP的所有字段进行CRC计算
         // 简化实现，仅使用地址和数据大小
-        if (dataDlp->tlp->hasAddr) {
+        if (dataDlp->tlp->hasAddr()) {
             crc ^= dataDlp->tlp->address;
         }
         
-        if (dataDlp->tlp->hasData) {
+        if (dataDlp->tlp->hasData()) {
             crc ^= dataDlp->tlp->dataSize;
         }
     }
@@ -558,7 +567,7 @@ PCIeLinkLayer::periodicFlowControlUpdate()
     // 重新调度事件
     schedule(new EventFunctionWrapper([this]{ periodicFlowControlUpdate(); }, 
                                      name() + ".flowControlEvent", true), 
-             curTick() + 1000);  // 1000个周期后再次触发
+             curTick() + flowControlUpdateIntervalTicks);
 }
 
 void 
@@ -579,7 +588,7 @@ PCIeLinkLayer::handleRetryTimeout()
     // 重新调度事件
     schedule(new EventFunctionWrapper([this]{ handleRetryTimeout(); }, 
                                      name() + ".retryTimeoutEvent", true), 
-             curTick() + 5000);  // 5000个周期后再次触发
+             curTick() + retryTimeoutTicks);
 }
 
 uint32_t 
@@ -592,7 +601,7 @@ PCIeLinkLayer::calculateTLPSize(PCIe::TLP* tlp)
     uint32_t size = 1;  // 至少1个信用点
     
     // 如果有数据，增加数据大小
-    if (tlp->hasData) {
+    if (tlp->hasData()) {
         // 每4字节数据需要1个信用点
         size += (tlp->dataSize + 3) / 4;
     }

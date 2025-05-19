@@ -3,7 +3,7 @@
  * PCIe协议转换器实现文件
  */
 
-#include "protocol_converter/converters/PCIeConverter.hh"
+#include "expr/protocol_converter/converters/PCIeConverter.hh"
 #include "debug/PCIeConverter.hh"
 #include <cstring>
 
@@ -50,18 +50,18 @@ PCIeTLPTypeMapping::mapTLPTypeToUPF(uint8_t tlpType)
 }
 
 // 构造函数
-PCIeConverter::PCIeConverter(const std::string& name, const std::string& targetProtocol)
-    : ProtocolConverter(name, "PCIe", targetProtocol)
+PCIeConverter::PCIeConverter(const PCIeConverterParams &params)
+    : SimObject(params)
 {
     DPRINTF(PCIeConverter, "创建PCIe协议转换器: 目标协议=%s\n", targetProtocol.c_str());
 }
 
 // 源协议到UPF的转换
-ProtocolConverter::ConversionResult
+gem5::ConversionResult
 PCIeConverter::sourceToUPF(void* sourcePacket, std::shared_ptr<upf::Packet>& upfPacket)
 {
     if (!sourcePacket) {
-        return ConversionResult::ERROR;
+        return gem5::ConversionResult::ERROR;
     }
     
     // 直接调用TLP转换函数，暂时不处理Flit
@@ -70,11 +70,11 @@ PCIeConverter::sourceToUPF(void* sourcePacket, std::shared_ptr<upf::Packet>& upf
 }
 
 // UPF到目标协议的转换
-ProtocolConverter::ConversionResult
+gem5::ConversionResult
 PCIeConverter::UPFToTarget(const std::shared_ptr<upf::Packet>& upfPacket, void*& targetPacket)
 {
     if (!upfPacket) {
-        return ConversionResult::ERROR;
+        return gem5::ConversionResult::ERROR;
     }
     
     // 直接调用TLP转换函数，暂时不处理Flit
@@ -83,11 +83,11 @@ PCIeConverter::UPFToTarget(const std::shared_ptr<upf::Packet>& upfPacket, void*&
 }
 
 // PCIe TLP到UPF的转换
-ProtocolConverter::ConversionResult
+gem5::ConversionResult
 PCIeConverter::PCIeTLPToUPF(void* tlpPacket, std::shared_ptr<upf::Packet>& upfPacket)
 {
     if (!tlpPacket) {
-        return ConversionResult::ERROR;
+        return gem5::ConversionResult::ERROR;
     }
     
     // 转换为PCIe TLP类型
@@ -98,7 +98,7 @@ PCIeConverter::PCIeTLPToUPF(void* tlpPacket, std::shared_ptr<upf::Packet>& upfPa
                                              PCIeTLPTypeMapping::mapTLPTypeToUPF(tlp->fmt_type));
     
     if (upfPacket->getType() == upf::TransactionType::UNKNOWN) {
-        return ConversionResult::UNSUPPORTED_FEATURE;
+        return gem5::ConversionResult::UNSUPPORTED_FEATURE;
     }
     
     // 设置通用字段
@@ -114,15 +114,15 @@ PCIeConverter::PCIeTLPToUPF(void* tlpPacket, std::shared_ptr<upf::Packet>& upfPa
     }
     
     // 设置标签
-    upfPacket->setMetadata().setInt("tag", tlp->tag);
+    upfPacket->getMetadata().setInt("tag", tlp->tag);
     
     // 设置字节使能
     if (isTLPMemoryWrite(tlp->fmt_type)) {
-        upfPacket->setMetadata().setInt("first_be", tlp->firstDWBE);
-        upfPacket->setMetadata().setInt("last_be", tlp->lastDWBE);
+        upfPacket->getMetadata().setInt("first_be", tlp->firstDWBE);
+        upfPacket->getMetadata().setInt("last_be", tlp->lastDWBE);
     } else if (isTLPMemoryRead(tlp->fmt_type)) {
-        upfPacket->setMetadata().setInt("first_be", 0xF); // 默认全部使能
-        upfPacket->setMetadata().setInt("last_be", tlp->lastDWBE);
+        upfPacket->getMetadata().setInt("first_be", 0xF); // 默认全部使能
+        upfPacket->getMetadata().setInt("last_be", tlp->lastDWBE);
     }
     
     // 设置缓存属性
@@ -133,7 +133,10 @@ PCIeConverter::PCIeTLPToUPF(void* tlpPacket, std::shared_ptr<upf::Packet>& upfPa
     
     // 复制数据(如果有)
     if (hasTLPData(tlp->fmt_type) && tlp->dataSize > 0) {
-        upfPacket->setData(tlp->data, tlp->dataSize);
+        //TODO检查函数调用
+        // upfPacket->setData(tlp->data); 
+        std::vector<uint8_t> data(tlp->data, tlp->data + tlp->dataSize);
+        upfPacket->setData(data);
     }
     
     // 设置原始协议信息
@@ -142,15 +145,15 @@ PCIeConverter::PCIeTLPToUPF(void* tlpPacket, std::shared_ptr<upf::Packet>& upfPa
     DPRINTF(PCIeConverter, "PCIe TLP转换为UPF: 类型=%d, 地址=0x%lx\n",
             static_cast<int>(upfPacket->getType()), upfPacket->getAddress());
     
-    return ConversionResult::SUCCESS;
+    return gem5::ConversionResult::SUCCESS;
 }
 
 // UPF到PCIe TLP的转换
-ProtocolConverter::ConversionResult
+gem5::ConversionResult
 PCIeConverter::UPFToPCIeTLP(const std::shared_ptr<upf::Packet>& upfPacket, void*& tlpPacket)
 {
     if (!upfPacket) {
-        return ConversionResult::ERROR;
+        return gem5::ConversionResult::ERROR;
     }
     
     // 创建PCIe TLP数据包
@@ -216,7 +219,7 @@ PCIeConverter::UPFToPCIeTLP(const std::shared_ptr<upf::Packet>& upfPacket, void*
         
       case upf::TransactionType::FLOW_CONTROL:
         // 根据是否有数据选择Cpl或CplD
-        if (upfPacket->hasData()) {
+        if (!upfPacket->getData().empty()) {
             fmt_type = 0x4A; // CplD
         } else {
             fmt_type = 0x0A; // Cpl
@@ -225,7 +228,7 @@ PCIeConverter::UPFToPCIeTLP(const std::shared_ptr<upf::Packet>& upfPacket, void*
         
       case upf::TransactionType::MESSAGE:
         // 根据是否有数据选择Msg或MsgD
-        if (upfPacket->hasData()) {
+        if (!upfPacket->getData().empty()) {
             fmt_type = 0x70; // MsgD
         } else {
             fmt_type = 0x30; // Msg
@@ -234,7 +237,7 @@ PCIeConverter::UPFToPCIeTLP(const std::shared_ptr<upf::Packet>& upfPacket, void*
         
       default:
         delete tlp;
-        return ConversionResult::UNSUPPORTED_FEATURE;
+        return gem5::ConversionResult::UNSUPPORTED_FEATURE;
     }
     
     tlp->fmt_type = fmt_type;
@@ -244,10 +247,11 @@ PCIeConverter::UPFToPCIeTLP(const std::shared_ptr<upf::Packet>& upfPacket, void*
                    (static_cast<uint8_t>(mapUPFToPCIeCacheAttr(upfPacket->getCacheAttribute())));
     
     // 复制数据(如果有)
-    if (upfPacket->hasData() && upfPacket->getSize() > 0) {
-        tlp->dataSize = upfPacket->getSize();
+    const std::vector<uint8_t>& data = upfPacket->getData();
+    if (!data.empty()) {
+        tlp->dataSize = data.size();
         tlp->data = new uint8_t[tlp->dataSize];
-        std::memcpy(tlp->data, upfPacket->getData().data(), tlp->dataSize);
+        std::memcpy(tlp->data, data.data(), tlp->dataSize);
     } else {
         tlp->dataSize = 0;
         tlp->data = nullptr;
@@ -256,23 +260,23 @@ PCIeConverter::UPFToPCIeTLP(const std::shared_ptr<upf::Packet>& upfPacket, void*
     DPRINTF(PCIeConverter, "UPF转换为PCIe TLP: FMT_TYPE=0x%x, 地址=0x%lx\n",
             tlp->fmt_type, tlp->address);
     
-    return ConversionResult::SUCCESS;
+    return gem5::ConversionResult::SUCCESS;
 }
 
 // PCIe Flit到UPF的转换 - 暂未实现
-ProtocolConverter::ConversionResult
+gem5::ConversionResult
 PCIeConverter::PCIeFlitToUPF(void* flitPacket, std::shared_ptr<upf::Packet>& upfPacket)
 {
     // 暂未实现
-    return ConversionResult::UNSUPPORTED_FEATURE;
+    return gem5::ConversionResult::UNSUPPORTED_FEATURE;
 }
 
 // UPF到PCIe Flit的转换 - 暂未实现
-ProtocolConverter::ConversionResult
+gem5::ConversionResult
 PCIeConverter::UPFToPCIeFlit(const std::shared_ptr<upf::Packet>& upfPacket, void*& flitPacket)
 {
     // 暂未实现
-    return ConversionResult::UNSUPPORTED_FEATURE;
+    return gem5::ConversionResult::UNSUPPORTED_FEATURE;
 }
 
 // 辅助方法 - 映射PCIe地址空间类型到UPF地址空间
@@ -398,9 +402,9 @@ PCIeConverter::processTLP(PCIe::TLP* tlp)
     
     // 将TLP转换为UPF
     std::shared_ptr<upf::Packet> upfPacket;
-    ConversionResult result = TLPToUPF(tlp, upfPacket);
+    gem5::ConversionResult result = TLPToUPF(tlp, upfPacket);
     
-    if (result != ConversionResult::SUCCESS) {
+    if (result != gem5::ConversionResult::SUCCESS) {
         DPRINTF(PCIeConverter, "TLP转换为UPF失败: %d\n", static_cast<int>(result));
         return false;
     }
@@ -411,11 +415,11 @@ PCIeConverter::processTLP(PCIe::TLP* tlp)
 }
 
 // TLP到UPF的转换
-ProtocolConverter::ConversionResult
+gem5::ConversionResult
 PCIeConverter::TLPToUPF(PCIe::TLP* tlp, std::shared_ptr<upf::Packet>& upfPacket)
 {
     if (!tlp) {
-        return ConversionResult::ERROR;
+        return gem5::ConversionResult::ERROR;
     }
     
     // 创建UPF数据包
@@ -423,7 +427,7 @@ PCIeConverter::TLPToUPF(PCIe::TLP* tlp, std::shared_ptr<upf::Packet>& upfPacket)
                                              PCIeTLPTypeMapping::mapTLPTypeToUPF(tlp->fmt_type));
     
     if (upfPacket->getType() == upf::TransactionType::UNKNOWN) {
-        return ConversionResult::UNSUPPORTED_FEATURE;
+        return gem5::ConversionResult::UNSUPPORTED_FEATURE;
     }
     
     // 设置通用字段
@@ -463,15 +467,15 @@ PCIeConverter::TLPToUPF(PCIe::TLP* tlp, std::shared_ptr<upf::Packet>& upfPacket)
     DPRINTF(PCIeConverter, "TLP转换为UPF: 类型=%d, 地址=0x%lx\n",
             static_cast<int>(upfPacket->getType()), upfPacket->getAddress());
     
-    return ConversionResult::SUCCESS;
+    return gem5::ConversionResult::SUCCESS;
 }
 
 // UPF到TLP的转换
-ProtocolConverter::ConversionResult
+gem5::ConversionResult
 PCIeConverter::UPFToTLP(const std::shared_ptr<upf::Packet>& upfPacket, PCIe::TLP*& tlp)
 {
     if (!upfPacket) {
-        return ConversionResult::ERROR;
+        return gem5::ConversionResult::ERROR;
     }
     
     // 创建PCIe TLP数据包
@@ -554,7 +558,7 @@ PCIeConverter::UPFToTLP(const std::shared_ptr<upf::Packet>& upfPacket, PCIe::TLP
         
       default:
         delete tlp;
-        return ConversionResult::UNSUPPORTED_FEATURE;
+        return gem5::ConversionResult::UNSUPPORTED_FEATURE;
     }
     
     tlp->fmt_type = fmt_type;
@@ -572,7 +576,7 @@ PCIeConverter::UPFToTLP(const std::shared_ptr<upf::Packet>& upfPacket, PCIe::TLP
     DPRINTF(PCIeConverter, "UPF转换为TLP: FMT_TYPE=0x%x, 地址=0x%lx\n",
             tlp->fmt_type, tlp->address);
     
-    return ConversionResult::SUCCESS;
+    return gem5::ConversionResult::SUCCESS;
 }
 
 } // namespace gem5

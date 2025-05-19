@@ -1,0 +1,23 @@
+# /home/lrh/projects/gem5/src/protocol_converter/SConscript
+
+Import('*')
+
+SimObject('GenericPacketProcessor.py', sim_objects=['GenericPacketProcessor'])
+SimObject('phy_abstraction/SimpleChipletLink.py', sim_objects=['SimpleChipletLink'])
+SimObject('link_layer/PCIeLinkLayer.py', sim_objects=['PCIeLinkLayer'])
+SimObject('converters/PCIeConverter.py', sim_objects=['PCIeConverter'])
+SimObject('converters/ProtocolConverter.py', sim_objects=['ProtocolConverter'])
+
+Source('GenericPacketProcessor.cc')
+Source('phy_abstraction/SimpleChipletLink.cc')
+Source('link_layer/PCIeLinkLayer.cc')
+Source('converters/PCIeConverter.cc')
+Source('converters/ProtocolConverter.cc')
+Source('converters/TLPInterface.cc')
+
+DebugFlag('PCIeConverter')
+DebugFlag('ProtocolConverter')
+DebugFlag('PCIeLinkLayer')
+DebugFlag('SimpleChipletLink')
+DebugFlag('GenericPacketProcessor')
+DebugFlag('TLPInterface')

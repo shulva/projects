@@ -7,15 +7,15 @@ from m5.SimObject import SimObject
 
 class SimpleChipletLink(SimObject):
     type = 'SimpleChipletLink'
-    cxx_header = "protocol_converter/phy_abstraction/SimpleChipletLink.hh"
+    cxx_header = "expr/protocol_converter/phy_abstraction/SimpleChipletLink.hh"
     cxx_class = 'gem5::SimpleChipletLink'
 
     # 链路参数
     bandwidth = Param.UInt64(16, "链路带宽 (Gbps)")
     baseLatency = Param.Tick(100, "基础延迟 (ps)")
-    bitErrorRate = Param.Double(1e-12, "位错误率")
+    bitErrorRate = Param.Float(1e-12, "位错误率")  # 将 Double 改为 Float
     linkWidth = Param.UInt32(16, "链路宽度 (bits)")
-    encodingOverhead = Param.Double(1.0, "编码开销 (如8b/10b为1.25)")
+    encodingOverhead = Param.Float(1.0, "编码开销 (如8b/10b为1.25)")  # 这里也需要改为 Float
     
     # 协议参数
     protocol = Param.UInt8(0, "默认协议类型 (0:PCIe, 1:CXL, 2:UCIe)")

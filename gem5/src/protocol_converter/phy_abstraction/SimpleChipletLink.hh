@@ -57,20 +57,19 @@ struct PhyPacket {
     std::vector<uint8_t> data; // 原始数据字节
     Tick arrivalTime;          // 到达时间
     PhyErrorType error;        // 错误类型
-    
+    bool isDLLP;           // 是否为DLLP类型
+    uint32_t size;           // 数据包大小
+    PhyProtocolType protocol; // 协议类型
+    PhyPacketType packetType; // 数据包类型
+
     // 构造函数
-    PhyPacket(const void* _data, uint32_t _size, Tick _time)
-        : arrivalTime(_time), error(ERROR_NONE) {
-        // 复制数据到vector
-        const uint8_t* bytes = static_cast<const uint8_t*>(_data);
-        data.assign(bytes, bytes + _size);
-    }
-    
+    PhyPacket(const void* _data, uint32_t _size, bool _isDLLP, PhyProtocolType _protocol, Tick _arrivalTime);
+      
     // 获取数据大小
     uint32_t getSize() const {
         return data.size();
     }
-    
+
     // 获取数据指针
     const uint8_t* getData() const {
         return data.data();
@@ -83,22 +82,22 @@ class SimpleChipletLink : public SimObject
   public:
     // 构造函数
     SimpleChipletLink(const SimpleChipletLinkParams &p);
-    
+
     // 初始化
     void init() override;
-    
+
     // 启动
     void startup() override;
-    
+
     // 设置链路状态
     void setLinkState(PhyLinkState state);
-    
+
     // 获取链路状态
     PhyLinkState getLinkState() const;
-    
+
     // 设置传输模式
     void setTransferMode(PhyTransferMode mode);
-    
+
     // 获取传输模式
     PhyTransferMode getTransferMode() const;
     
@@ -107,27 +106,46 @@ class SimpleChipletLink : public SimObject
     
     // 接收数据包接口（由链路层调用）
     PhyPacket* receivePacket();
-    
+
     // 检查是否有数据包可接收
     bool hasPacket() const;
-    
+
     // 设置链路层回调
     // 链路层回调接口
-    using LinkLayerCallback = std::function<bool(PhyPacket*, PhyProtocolType, PhyPacketType)>;
+    using LinkLayerCallback = std::function<bool(PhyPacket*)>;
     void setLinkLayerCallback(LinkLayerCallback callback);
-    
+
     // 计算传输延迟
     Tick calculateTransferDelay(uint32_t size) const;
-    
+
     // 模拟位错误
     PhyErrorType simulateBitError(uint32_t size) const;
-    
+
     // 识别协议类型
     PhyProtocolType identifyProtocol(const PhyPacket* packet) const;
-    
+
     // 识别数据包类型
     PhyPacketType identifyPacketType(const PhyPacket* packet) const;
-    
+
+    // 设置协议类型
+    void setProtocolType(PhyProtocolType protocol);
+
+    // 获取协议类型
+    PhyProtocolType getProtocolType() const; // 移除参数
+
+     // 发送TLP
+    bool sendTLP(void* tlp, uint32_t size, PhyProtocolType protocol);
+
+    // 发送DLLP
+    bool sendDLLP(void* dllp, uint32_t size, PhyProtocolType protocol);
+
+
+    //处理发送的数据包
+    void handleSendPacket(const void* data, uint32_t size, bool isDLLP, PhyProtocolType protocol); // 修正参数类型和名称
+
+    // 处理接收数据包
+    void handleReceiveEvent(PhyPacket* packet);
+
   protected:
     // 链路参数
     uint64_t bandwidth;       // 带宽 (Gbps)
@@ -135,6 +153,7 @@ class SimpleChipletLink : public SimObject
     double bitErrorRate;      // 位错误率
     uint32_t linkWidth;       // 链路宽度 (bits)
     double encodingOverhead;  // 编码开销 (如8b/10b为1.25)
+    PhyProtocolType protocolType; // 协议类型
     
     // 链路状态
     PhyLinkState linkState;   // 当前链路状态
@@ -149,12 +168,6 @@ class SimpleChipletLink : public SimObject
     // 随机数生成器（用于模拟错误）
     mutable std::mt19937 rng;
     mutable std::uniform_real_distribution<double> dist;
-    
-    // 处理发送数据包
-    void handleSendPacket(const void* data, uint32_t size);
-    
-    // 处理接收数据包事件
-    void handleReceiveEvent(PhyPacket* packet);
     
     // 检查是否为PCIe TLP
     bool isPCIeTLP(const PhyPacket* packet) const;

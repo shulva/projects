@@ -3,35 +3,38 @@
  * 通用数据包处理器实现文件
  */
 
-#include "protocol_converter/GenericPacketProcessor.hh"
+#include "expr/protocol_converter/GenericPacketProcessor.hh"
 #include "base/trace.hh"
 #include "debug/GenericPacketProcessor.hh"
-#include "protocol_converter/upf/UPF.hh"
+#include "upf/UPF.hh"
+#include "expr/protocol_converter/link_layer/PCIeLinkLayer.hh" // 包含PCIeLinkLayer头文件以使用DataDLP和ControlDLLP结构
 
 namespace gem5 {
 
 // 注册调试标志
-Trace::CreateDebugFlag("GenericPacketProcessor", "通用数据包处理器调试信息");
 
-GenericPacketProcessor::GenericPacketProcessor(const GenericPacketProcessorParams &p)
-    : SimObject(p),
-      physicalLayer(p.physicalLayer),
-      linkLayer(p.linkLayer),
-      protocolConverter(p.protocolConverter)
+GenericPacketProcessor::GenericPacketProcessor(const GenericPacketProcessorParams& params)
+    : SimObject(params),
+      physicalLayer(params.physical_layer),
+      linkLayer(params.link_layer),
+      protocolConverter(params.protocol_converter)
 {
     DPRINTF(GenericPacketProcessor, "创建通用数据包处理器\n");
-    
+
     // 设置物理层回调
     physicalLayer->setLinkLayerCallback(
         [this](PhyPacket* packet) {
             return this->handlePhyPacket(packet);
         });
-    
+
     // 设置链路层回调
     linkLayer->setPhyCallback(
-        [this](void* data, uint32_t size) {
-            return this->handleLinkLayerPacket(data, size);
+        [this](PhyPacket* packet) { // 修改 lambda 签名以匹配 PhyCallback
+            return this->handleLinkLayerPacket(packet->data.data(),packet->getSize()); 
         });
+
+    // 设置协议转换器回调
+    // ... existing code ...
 }
 
 void 
@@ -102,7 +105,7 @@ GenericPacketProcessor::handlePhyPacket(PhyPacket* packet)
     PhyPacketType packetType = physicalLayer->identifyPacketType(packet);
     
     // 提取数据
-    const uint8_t* data = packet->getData();
+    uint8_t* data = packet->data.data();
     uint32_t size = packet->getSize();
     
     // 创建数据副本
@@ -150,20 +153,20 @@ GenericPacketProcessor::handleProtocolConversion(void* sourcePacket, void*& targ
     std::shared_ptr<upf::Packet> upfPacket;
     
     // 源协议到UPF的转换
-    ProtocolConverter::ConversionResult sourceToUPFResult = 
+    gem5::ConversionResult sourceToUPFResult = 
         protocolConverter->sourceToUPF(sourcePacket, upfPacket);
     
-    if (sourceToUPFResult != ProtocolConverter::ConversionResult::SUCCESS) {
+    if (sourceToUPFResult !=gem5::ConversionResult::SUCCESS) {
         DPRINTF(GenericPacketProcessor, "源协议到UPF的转换失败: %d\n", 
                 static_cast<int>(sourceToUPFResult));
         return false;
     }
     
     // UPF到目标协议的转换
-    ProtocolConverter::ConversionResult UPFToTargetResult = 
+    gem5::ConversionResult UPFToTargetResult = 
         protocolConverter->UPFToTarget(upfPacket, targetPacket);
     
-    if (UPFToTargetResult != ProtocolConverter::ConversionResult::SUCCESS) {
+    if (UPFToTargetResult !=gem5::ConversionResult::SUCCESS) {
         DPRINTF(GenericPacketProcessor, "UPF到目标协议的转换失败: %d\n", 
                 static_cast<int>(UPFToTargetResult));
         return false;

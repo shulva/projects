@@ -6,8 +6,10 @@
 #ifndef __PROTOCOL_CONVERTER_LINK_LAYER_PCIE_LINK_LAYER_HH__
 #define __PROTOCOL_CONVERTER_LINK_LAYER_PCIE_LINK_LAYER_HH__
 
-#include "protocol_converter/converters/TLPInterface.hh"
+#include "../phy_abstraction/SimpleChipletLink.hh"
+#include "../converters/TLPInterface.hh"
 #include "base/types.hh"
+#include "params/PCIeLinkLayer.hh"
 #include "sim/sim_object.hh"
 #include <queue>
 #include <map>
@@ -21,7 +23,17 @@ enum DLLPType {
     DLLP_TYPE_ACK,          // 确认
     DLLP_TYPE_NAK           // 否认
 };
-
+// 流控状态结构
+struct FlowControlStatus {
+    uint16_t availableCredits;  // 可用信用点
+    uint16_t consumedCredits;   // 已消耗信用点
+    uint16_t returnedCredits;   // 已返回信用点
+    uint8_t bufferType;         // buffer类型标识
+    
+    FlowControlStatus() 
+        : availableCredits(0), consumedCredits(0), 
+          returnedCredits(0), bufferType(0) {}
+};
 // 接收缓冲区
 struct ReceiveBuffer {
     std::queue<PCIe::TLP*> tlpQueue;      // TLP队列
@@ -38,9 +50,6 @@ struct SendBuffer {
     FlowControlStatus flowControl;         // 流控状态
 };
 
-// 在PCIeLinkLayer类中添加
-ReceiveBuffer rxBuffer;
-SendBuffer txBuffer;
 // 控制DLLP结构(流控和ACK/NAK共用)
 struct ControlDLLP {
     uint8_t type;           // DLLP类型
@@ -96,20 +105,10 @@ struct DataDLP {
     }
 };
 
-// 流控状态结构
-struct FlowControlStatus {
-    uint16_t availableCredits;  // 可用信用点
-    uint16_t consumedCredits;   // 已消耗信用点
-    uint16_t returnedCredits;   // 已返回信用点
-    uint8_t bufferType;         // buffer类型标识
-    
-    FlowControlStatus() 
-        : availableCredits(0), consumedCredits(0), 
-          returnedCredits(0), bufferType(0) {}
-};
+
 
 // PCIe链路层类
-class PCIeLinkLayer : public SimObject, public TLPInterface
+class PCIeLinkLayer : public SimObject, public gem5::PCIe::TLPInterface
 {
   public:
     // 构造函数
@@ -122,7 +121,7 @@ class PCIeLinkLayer : public SimObject, public TLPInterface
     void startup() override;
     
     // TLP处理接口实现
-    bool processTLP(PCIe::TLP* tlp) override;
+    bool processTLP(PCIe::TLP* tlp);
     
     // 接收数据DLP的接口
     bool receiveDataDLP(DataDLP* dataDlp);
@@ -146,7 +145,7 @@ class PCIeLinkLayer : public SimObject, public TLPInterface
     ControlDLLP* createNakDLLP(uint16_t sequenceNum);
     
     // 设置物理层回调
-    using PhyCallback = std::function<bool(void*)>;
+    using PhyCallback = std::function<bool(PhyPacket*)>;
     void setPhyCallback(PhyCallback callback);
     
     // 设置协议层回调
@@ -154,6 +153,10 @@ class PCIeLinkLayer : public SimObject, public TLPInterface
     void setProtocolCallback(ProtocolCallback callback);
     
   protected:
+    // 接收和发送缓冲区
+    ReceiveBuffer rxBuffer;
+    SendBuffer txBuffer;
+
     // 流控状态
     FlowControlStatus txFlowControl;  // 发送流控
     FlowControlStatus rxFlowControl;  // 接收流控
@@ -168,6 +171,11 @@ class PCIeLinkLayer : public SimObject, public TLPInterface
     // 回调函数
     PhyCallback phyCallback;
     ProtocolCallback protocolCallback;
+
+    // 从Python参数获取的配置
+    Tick flowControlUpdateIntervalTicks;
+    Tick retryTimeoutTicks;
+    int maxRetriesCount;
     
     // 辅助方法 - 封装TLP为数据DLP
     DataDLP* encapsulateTLP(PCIe::TLP* tlp);
