@@ -13,13 +13,6 @@
 namespace gem5 {
 
 // PhyPacket 构造函数实现
-PhyPacket::PhyPacket(const void* _data, uint32_t _size, bool _isDLLP, PhyProtocolType _protocol, Tick _arrivalTime)
-    : arrivalTime(_arrivalTime), error(ERROR_NONE), isDLLP(_isDLLP), size(_size), protocol(_protocol), packetType(PACKET_UNKNOWN)
-{
-    const uint8_t* bytes = static_cast<const uint8_t*>(_data);
-    data.assign(bytes, bytes + _size);
-}
-
 SimpleChipletLink::SimpleChipletLink(const SimpleChipletLinkParams &p)
     : SimObject(p),
       bandwidth(p.bandwidth),
@@ -28,10 +21,7 @@ SimpleChipletLink::SimpleChipletLink(const SimpleChipletLinkParams &p)
       linkWidth(p.linkWidth),
       encodingOverhead(p.encodingOverhead),
       linkState(LINK_DOWN),
-      transferMode(MODE_NON_FLIT),
-      linkLayerCallback(nullptr),
-      rng(p.randomSeed),
-      dist(0.0, 1.0)
+      transferMode(MODE_NON_FLIT)
 {
     DPRINTF(SimpleChipletLink, "创建芯粒链路物理层: 带宽=%llu Gbps, 基础延迟=%llu ps, BER=%e\n",bandwidth, baseLatency, bitErrorRate);
 }
@@ -107,54 +97,6 @@ SimpleChipletLink::getProtocolType() const // 移除参数
     return protocolType;
 }
 
-bool
-SimpleChipletLink::sendTLP(void* tlp, uint32_t size, PhyProtocolType protocol)
-{
-    // 发送TLP
-    DPRINTF(SimpleChipletLink, "发送TLP，大小: %d 字节，协议: %d\n", size, protocol);
-
-    // 检查链路状态
-    if (linkState != LINK_UP) {
-        DPRINTF(SimpleChipletLink, "链路未就绪，无法发送TLP\n");
-        return false;
-    }
-
-    // 检查协议是否支持non-flit模式
-    if (transferMode == MODE_NON_FLIT && protocol == PROTOCOL_UCIE) {
-        DPRINTF(SimpleChipletLink, "UCIe协议不支持non-flit模式\n");
-        return false;
-    }
-
-    // 处理发送数据包
-    handleSendPacket(tlp, size, false, protocol); // 传递 isDLLP = false
-
-    return true;
-}
-
-bool
-SimpleChipletLink::sendDLLP(void* dllp, uint32_t size, PhyProtocolType protocol)
-{
-    // 发送DLLP
-    DPRINTF(SimpleChipletLink, "发送DLLP，大小: %d 字节，协议: %d\n", size, protocol);
-
-    // 检查链路状态
-    if (linkState != LINK_UP) {
-        DPRINTF(SimpleChipletLink, "链路未就绪，无法发送DLLP\n");
-        return false;
-    }
-
-    // 检查协议是否支持non-flit模式
-    if (transferMode == MODE_NON_FLIT && protocol == PROTOCOL_UCIE) {
-        DPRINTF(SimpleChipletLink, "UCIe协议不支持non-flit模式\n");
-        return false;
-    }
-
-    // 处理发送数据包
-    handleSendPacket(dllp, size, true, protocol); // 传递 isDLLP = true
-
-    return true;
-}
-
 PhyPacket*
 SimpleChipletLink::receivePacket()
 {
@@ -182,7 +124,7 @@ SimpleChipletLink::hasPacket() const
 
 // 添加 sendPacket 方法的实现
 bool
-SimpleChipletLink::sendPacket(const void* data, uint32_t size)//暂时写一个通过编译
+SimpleChipletLink::sendPacket(void* data, uint32_t size)
 {
     DPRINTF(SimpleChipletLink, "发送通用数据包，大小: %d 字节\n", size);
 
@@ -199,14 +141,6 @@ SimpleChipletLink::sendPacket(const void* data, uint32_t size)//暂时写一个�
     return true;
 }
 
-
-void
-SimpleChipletLink::setLinkLayerCallback(LinkLayerCallback callback)
-{
-    // 设置链路层回调
-    linkLayerCallback = callback;
-    DPRINTF(SimpleChipletLink, "设置链路层回调\n");
-}
 
 Tick
 SimpleChipletLink::calculateTransferDelay(uint32_t size) const
@@ -244,7 +178,7 @@ SimpleChipletLink::simulateBitError(uint32_t size) const
 }
 
 void
-SimpleChipletLink::handleSendPacket(const void* data, uint32_t size, bool isDLLP, PhyProtocolType protocol) // 修正参数
+SimpleChipletLink::send_phy2link(const void* data, uint32_t size, bool isDLLP, PhyProtocolType protocol) // 修正参数
 {
     // 处理发送数据包
 
@@ -252,33 +186,24 @@ SimpleChipletLink::handleSendPacket(const void* data, uint32_t size, bool isDLLP
     Tick delay = calculateTransferDelay(size);
 
     // 创建数据包
-    PhyPacket* packet = new PhyPacket(data, size, isDLLP, protocol, curTick() + delay); // 修正构造函数调用
-
-    // 模拟位错误
-    packet->error = simulateBitError(size);
+    PhyPacket* packet = new PhyPacket(data, curTick() + delay); // 修正构造函数调用
 
     // 调度接收事件
-    schedule(new EventFunctionWrapper([this, packet]{ handleReceiveEvent(packet); },
-                                     name() + ".receiveEvent", true),
-             curTick() + delay);
+    schedule(new EventFunctionWrapper([this,packet]{handleReceiveEven(packet);},
+                                      name() + ".receiveEvent", true),curTick()+delay);
 
     DPRINTF(SimpleChipletLink, "调度接收事件: 延迟=%llu ps, 类型=%s, 协议=%d\n",
             delay, isDLLP ? "DLLP" : "TLP", protocol);
 }
 
 void
-SimpleChipletLink::handleReceiveEvent(PhyPacket* packet)
+SimpleChipletLink::receive_PLP(PhyPacket* packet)
 {
     // 处理接收数据包事件
 
     // 识别协议类型和数据包类型
     PhyProtocolType protocol = identifyProtocol(packet);
     PhyPacketType packetType = identifyPacketType(packet);
-
-    // 更新 packet 中的协议和类型信息
-    packet->protocol = protocol;
-    packet->packetType = packetType;
-
 
     DPRINTF(SimpleChipletLink, "处理接收事件: 协议=%d, 类型=%d, 大小=%d 字节, 错误=%d\n",
             protocol, packetType, packet->getSize(), packet->error);

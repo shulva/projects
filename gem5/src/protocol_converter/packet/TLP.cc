@@ -3,9 +3,9 @@
  * PCIe TLP接口实现文件
  */
 
-#include "expr/protocol_converter/converters/ProtocolConverter.hh"
-#include "expr/protocol_converter/converters/TLPInterface.hh"
-#include "debug/TLPInterface.hh"
+#include "../converters/ProtocolConverter.hh"
+#include "TLP.hh"
+#include "TLP.hh"
 #include <cstring>
 
 namespace gem5 {

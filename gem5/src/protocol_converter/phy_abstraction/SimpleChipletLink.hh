@@ -3,12 +3,12 @@
  * 简单芯粒链路物理层抽象模型头文件
  */
 
-#ifndef __PROTOCOL_CONVERTER_PHY_ABSTRACTION_SIMPLE_CHIPLET_LINK_HH__
-#define __PROTOCOL_CONVERTER_PHY_ABSTRACTION_SIMPLE_CHIPLET_LINK_HH__
+#pragma once
 
 #include "base/types.hh"
 #include "sim/sim_object.hh"
 #include "params/SimpleChipletLink.hh"
+#include "../packet/PLP.hh"
 #include <functional>
 #include <queue>
 #include <random>
@@ -52,29 +52,6 @@ enum PhyPacketType {
     PACKET_FLIT     // FLIT类型
 };
 
-// 物理层数据包结构
-struct PhyPacket {
-    std::vector<uint8_t> data; // 原始数据字节
-    Tick arrivalTime;          // 到达时间
-    PhyErrorType error;        // 错误类型
-    bool isDLLP;           // 是否为DLLP类型
-    uint32_t size;           // 数据包大小
-    PhyProtocolType protocol; // 协议类型
-    PhyPacketType packetType; // 数据包类型
-
-    // 构造函数
-    PhyPacket(const void* _data, uint32_t _size, bool _isDLLP, PhyProtocolType _protocol, Tick _arrivalTime);
-      
-    // 获取数据大小
-    uint32_t getSize() const {
-        return data.size();
-    }
-
-    // 获取数据指针
-    const uint8_t* getData() const {
-        return data.data();
-    }
-};
 
 // 简单芯粒链路物理层类
 class SimpleChipletLink : public SimObject
@@ -84,10 +61,10 @@ class SimpleChipletLink : public SimObject
     SimpleChipletLink(const SimpleChipletLinkParams &p);
 
     // 初始化
-    void init() override;
+    void init() ;
 
     // 启动
-    void startup() override;
+    void startup() ;
 
     // 设置链路状态
     void setLinkState(PhyLinkState state);
@@ -101,19 +78,8 @@ class SimpleChipletLink : public SimObject
     // 获取传输模式
     PhyTransferMode getTransferMode() const;
     
-    // 发送数据包接口
-    bool sendPacket(const void* data, uint32_t size);
-    
-    // 接收数据包接口（由链路层调用）
-    PhyPacket* receivePacket();
-
     // 检查是否有数据包可接收
     bool hasPacket() const;
-
-    // 设置链路层回调
-    // 链路层回调接口
-    using LinkLayerCallback = std::function<bool(PhyPacket*)>;
-    void setLinkLayerCallback(LinkLayerCallback callback);
 
     // 计算传输延迟
     Tick calculateTransferDelay(uint32_t size) const;
@@ -139,12 +105,13 @@ class SimpleChipletLink : public SimObject
     // 发送DLLP
     bool sendDLLP(void* dllp, uint32_t size, PhyProtocolType protocol);
 
+    //处理发送的物理层数据包 //phy->link
+    void send_phy2link(const void* data, uint32_t size, bool isDLLP, PhyProtocolType protocol); // 修正参数类型和名称
 
-    //处理发送的数据包
-    void handleSendPacket(const void* data, uint32_t size, bool isDLLP, PhyProtocolType protocol); // 修正参数类型和名称
+    // 处理接收的物理层数据包 // port->phy PLP包
+    void receive_PLP(PhyPacket* packet);
 
-    // 处理接收数据包
-    void handleReceiveEvent(PhyPacket* packet);
+    //
 
   protected:
     // 链路参数
@@ -153,22 +120,12 @@ class SimpleChipletLink : public SimObject
     double bitErrorRate;      // 位错误率
     uint32_t linkWidth;       // 链路宽度 (bits)
     double encodingOverhead;  // 编码开销 (如8b/10b为1.25)
-    PhyProtocolType protocolType; // 协议类型
+    PhyProtocolType protocolType; // 协议类型?存疑
     
     // 链路状态
     PhyLinkState linkState;   // 当前链路状态
     PhyTransferMode transferMode; // 传输模式
-    
-    // 接收队列
-    std::queue<PhyPacket*> rxQueue;  // 接收队列
-    
-    // 链路层回调
-    LinkLayerCallback linkLayerCallback;
-    
-    // 随机数生成器（用于模拟错误）
-    mutable std::mt19937 rng;
-    mutable std::uniform_real_distribution<double> dist;
-    
+
     // 检查是否为PCIe TLP
     bool isPCIeTLP(const PhyPacket* packet) const;
     
@@ -186,5 +143,3 @@ class SimpleChipletLink : public SimObject
 };
 
 } // namespace gem5
-
-#endif // __PROTOCOL_CONVERTER_PHY_ABSTRACTION_SIMPLE_CHIPLET_LINK_HH__

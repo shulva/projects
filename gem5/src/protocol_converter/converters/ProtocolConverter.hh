@@ -11,7 +11,7 @@
 #include "sim/sim_object.hh"
 #include "../link_layer/PCIeLinkLayer.hh"
 #include "params/ProtocolConverter.hh"
-#include "TLPInterface.hh"
+#include "../packet/TLP.hh"
 #include "../upf/UPF.hh"
 
 namespace gem5 {

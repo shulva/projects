@@ -8,10 +8,10 @@ import argparse
 import sys
 import os
 
-
 # 实例化系统
 root = Root(full_system = False)
 root.SimpleChipletLink = SimpleChipletLink()
+
 
 print("----------------------------------------------------")
 # 开始模拟

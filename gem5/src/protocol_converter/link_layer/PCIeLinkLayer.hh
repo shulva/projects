@@ -7,7 +7,7 @@
 #define __PROTOCOL_CONVERTER_LINK_LAYER_PCIE_LINK_LAYER_HH__
 
 #include "../phy_abstraction/SimpleChipletLink.hh"
-#include "../converters/TLPInterface.hh"
+#include "../packet/TLP.hh"
 #include "base/types.hh"
 #include "params/PCIeLinkLayer.hh"
 #include "sim/sim_object.hh"

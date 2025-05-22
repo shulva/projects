@@ -6,7 +6,7 @@
 #ifndef __PROTOCOL_CONVERTER_LINK_LAYER_UNIFIED_LINK_LAYER_HH__
 #define __PROTOCOL_CONVERTER_LINK_LAYER_UNIFIED_LINK_LAYER_HH__
 
-#include "protocol_converter/converters/TLPInterface.hh"
+#include "../packet/TLP.hh"
 #include "base/types.hh"
 #include "sim/sim_object.hh"
 #include <queue>

@@ -7,7 +7,7 @@
 #define __PROTOCOL_CONVERTER_CONVERTERS_PCIE_CONVERTER_HH__
 
 #include "expr/protocol_converter/converters/ProtocolConverter.hh"
-#include "expr/protocol_converter/converters/TLPInterface.hh"
+#include "../packet/TLP.hh"
 #include "params/PCIeConverter.hh"
 #include <map>
 
