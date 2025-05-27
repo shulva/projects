@@ -8,6 +8,12 @@
 #include "base/types.hh"
 #include "sim/sim_object.hh"
 #include "params/SimpleChipletLink.hh"
+#include "debug/SimpleChipletLink.hh"
+#include "mem/packet.hh"  // 引入Packet类
+#include "mem/request.hh" // 引入Request类（用于创建Packet）
+#include "mem/port.hh" // 引入Request类（用于创建Packet）
+#include <base/addr_range.hh>  // 包含地址范围定义
+
 #include "../packet/PLP.hh"
 #include <functional>
 #include <queue>
@@ -64,7 +70,7 @@ class SimpleChipletLink : public SimObject
     void init() ;
 
     // 启动
-    void startup() ;
+    void startup() override ;
 
     // 设置链路状态
     void setLinkState(PhyLinkState state);
@@ -88,10 +94,10 @@ class SimpleChipletLink : public SimObject
     PhyErrorType simulateBitError(uint32_t size) const;
 
     // 识别协议类型
-    PhyProtocolType identifyProtocol(const PhyPacket* packet) const;
+    PhyProtocolType identifyProtocol(const PhysicalLayerPacket* packet) const;
 
     // 识别数据包类型
-    PhyPacketType identifyPacketType(const PhyPacket* packet) const;
+    PhyPacketType identifyPacketType(const PhysicalLayerPacket* packet) const;
 
     // 设置协议类型
     void setProtocolType(PhyProtocolType protocol);
@@ -107,39 +113,121 @@ class SimpleChipletLink : public SimObject
 
     //处理发送的物理层数据包 //phy->link
     void send_phy2link(const void* data, uint32_t size, bool isDLLP, PhyProtocolType protocol); // 修正参数类型和名称
-
+    
     // 处理接收的物理层数据包 // port->phy PLP包
-    void receive_PLP(PhyPacket* packet);
+    void receive_PLP(PhysicalLayerPacket* packet);
 
-    //
+    //接受数据包进elastic buffer
+    void receivePacket();
 
   protected:
     // 链路参数
     uint64_t bandwidth;       // 带宽 (Gbps)
-    Tick baseLatency;         // 基础延迟 (ps)
+    Tick baseLatency{};         // 基础延迟 (ps)
     double bitErrorRate;      // 位错误率
     uint32_t linkWidth;       // 链路宽度 (bits)
     double encodingOverhead;  // 编码开销 (如8b/10b为1.25)
     PhyProtocolType protocolType; // 协议类型?存疑
-    
+
     // 链路状态
     PhyLinkState linkState;   // 当前链路状态
     PhyTransferMode transferMode; // 传输模式
 
+    //-----------------------------------------------port
+    class PLPPort : public SlavePort {
+    public:
+        PLPPort(const std::string &name, SimpleChipletLink *owner)
+                : SlavePort(name, owner), owner(owner) {}
+
+    protected:
+        bool recvTimingReq(PacketPtr pkt) override {
+            DPRINTF(SimpleChipletLink, "PLPPort收到请求，地址：0x%x\n", pkt->getAddr());
+            
+            uint8_t* data = pkt->getPtr<uint8_t>();
+            size_t size = pkt->getSize();
+            
+            PhysicalLayerPacket* plp = new PhysicalLayerPacket(data, size);
+            DPRINTF(SimpleChipletLink, "accept PLP\n");
+            owner->receive_PLP(plp);
+            return true;
+        }
+
+        AddrRangeList getAddrRanges() const override {
+            AddrRangeList ranges;
+            ranges.push_back(AddrRange(0x1000, 0x1FFF));  // 地址范围：0x1000 ~ 0x1FFF,暂时写一个
+            return ranges;
+        }
+
+        Tick recvAtomic(PacketPtr pkt) override {
+            // 处理atomic模式请求
+
+        }
+
+        // 实现TimingResponseProtocol接口
+        void recvRespRetry() override {
+            // TODO:处理响应重试逻辑,不过这里不负责重传
+        }
+
+        // 实现FunctionalResponseProtocol接口
+        void recvFunctional(PacketPtr pkt) override {
+            // 处理functional模式请求（通常用于调试）
+            if (pkt->isRead()) {
+                // 填充读取数据
+                pkt->makeResponse();
+            } else if (pkt->isWrite()) {
+                // 处理写入数据
+                pkt->makeResponse();
+            }
+        }
+
+    private:
+        SimpleChipletLink *owner;
+    };
+    PLPPort phy_port; //接受PLP的port
+
+    class Phy_to_Link_Port : public MasterPort {
+    public:
+        Phy_to_Link_Port(const std::string &name, SimpleChipletLink *owner)
+                : MasterPort(name, owner) {
+            this->owner = owner;
+        }
+    protected:
+        bool recvTimingResp(PacketPtr pkt) override { return true; }
+        void recvReqRetry() override {};
+        SimpleChipletLink  *owner;
+    };
+    Phy_to_Link_Port phy2link_port;//发送DLP/TLP的port
+
+    Port &getPort(const std::string &if_name, PortID idx=InvalidPortID) override {
+        if (if_name == "plp_port")
+            return phy_port;
+        else
+            return SimObject::getPort(if_name, idx);
+    }
+
+    //-----------------------------------------------port
+
+    std::queue<PhysicalLayerPacket> rxQueue;
+
     // 检查是否为PCIe TLP
-    bool isPCIeTLP(const PhyPacket* packet) const;
+    bool isPCIeTLP(const PhysicalLayerPacket* packet) const;
     
     // 检查是否为PCIe DLLP
-    bool isPCIeDLLP(const PhyPacket* packet) const;
+    bool isPCIeDLLP(const PhysicalLayerPacket* packet) const;
     
     // 检查是否为CXL TLP
-    bool isCXLTLP(const PhyPacket* packet) const;
+    bool isCXLTLP(const PhysicalLayerPacket* packet) const;
     
     // 检查是否为CXL DLLP
-    bool isCXLDLLP(const PhyPacket* packet) const;
+    bool isCXLDLLP(const PhysicalLayerPacket* packet) const;
     
     // 检查是否为UCIe Flit
-    bool isUCIeFlit(const PhyPacket* packet) const;
+    bool isUCIeFlit(const PhysicalLayerPacket* packet) const;
+
 };
+
+
+// 在类定义中添加：
+
 
 } // namespace gem5

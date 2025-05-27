@@ -1,5 +1,5 @@
 /*
- * PCIePhysicalLayerPacket.hh
+ * PhysicalLayerPacket.hh
  * PCIe物理层数据包 (PLP) 结构定义
  */
 
@@ -30,36 +30,52 @@ enum class PCIeKCode : uint8_t {
     NONE = 0x00 // 占位符，表示无特定K-code
 };
 
-// PCIe物理层数据包 (PLP) 结构
+// 物理层数据包 (PLP) 结构
 // 这个结构表示在物理链路上经过帧界定符包装的数据包。
-struct PCIePhysicalLayerPacket {
+struct PhysicalLayerPacket {
     PCIeKCode startSymbol;          // 包起始符号 (例如 STP, SDP)
     std::vector<uint8_t> payload;   // 实际的有效载荷数据 (TLP 或 DLLP 的字节流)
     PCIeKCode endSymbol;            // 包结束符号 (例如 END, EDB)
 
     // 默认构造函数
-    PCIePhysicalLayerPacket()
+    PhysicalLayerPacket()
         : startSymbol(PCIeKCode::NONE),
-          endSymbol(PCIeKCode::NONE),
+          endSymbol(PCIeKCode::NONE)
          {}
 
     // 带参数的构造函数
-    PCIePhysicalLayerPacket(PCIeKCode start,
-                            const std::vector<uint8_t>& p_payload,
-                            PCIeKCode end
+    PhysicalLayerPacket(PCIeKCode start,
+                        const std::vector<uint8_t>& p_payload,
+                        PCIeKCode end
                             )
         : startSymbol(start),
           payload(p_payload),
-          endSymbol(end),
+          endSymbol(end)
            {}
 
+    // 从完整PLP数据构造
+    PhysicalLayerPacket(const uint8_t* data, size_t size) {
+        if (size < 2) { // 至少需要起始和结束标记
+            startSymbol = PCIeKCode::NONE;
+            endSymbol = PCIeKCode::NONE;
+            return;
+        }
+        
+        // 第一个字节是起始标记
+        startSymbol = static_cast<PCIeKCode>(data[0]);
+        // 最后一个字节是结束标记
+        endSymbol = static_cast<PCIeKCode>(data[size - 1]);
+        // 中间的数据是payload
+        payload = std::vector<uint8_t>(data + 1, data + size - 1);
+    }
+
     // 获取有效载荷大小
-    size_t getPayloadSize() const {
+    size_t getSize() const {
         return payload.size();
     }
 
     // 获取有效载荷数据的常量指针
-    const uint8_t* getPayloadData() const {
+    const uint8_t* getData() const {
         if (payload.empty()) {
             return nullptr;
         }
@@ -72,11 +88,6 @@ struct PCIePhysicalLayerPacket {
             return nullptr;
         }
         return payload.data();
-    }
-
-    // 设置有效载荷
-    void setPayload(const uint8_t* data, size_t size) {
-        payload.assign(data, data + size);
     }
 };
 

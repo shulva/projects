@@ -1,0 +1,102 @@
+digraph G {
+ranksep="1.3";
+subgraph cluster_root {
+color="#000000";
+fillcolor="#bab6ae";
+fontcolor="#000000";
+fontname=Arial;
+fontsize=14;
+label="root \n: Root";
+shape=box;
+style="rounded, filled";
+tooltip="eventq_index&#61;0&#10;\full_system&#61;false&#10;\sim_quantum&#61;0&#10;\time_sync_enable&#61;false&#10;\time_sync_period&#61;100000000000&#10;\time_sync_spin_threshold&#61;100000000";
+subgraph cluster_system {
+color="#000000";
+fillcolor="#e4e7eb";
+fontcolor="#000000";
+fontname=Arial;
+fontsize=14;
+label="system \n: System";
+shape=box;
+style="rounded, filled";
+tooltip="auto_unlink_shared_backstore&#61;false&#10;\cache_line_size&#61;64&#10;\eventq_index&#61;0&#10;\exit_on_work_items&#61;false&#10;\init_param&#61;0&#10;\m5ops_base&#61;0&#10;\mem_mode&#61;atomic&#10;\mem_ranges&#61;&#10;\memories&#61;&#10;\mmap_using_noreserve&#61;false&#10;\multi_thread&#61;false&#10;\num_work_ids&#61;16&#10;\readfile&#61;&#10;\redirect_paths&#61;&#10;\shadow_rom_ranges&#61;&#10;\shared_backstore&#61;&#10;\symbolfile&#61;&#10;\thermal_components&#61;&#10;\thermal_model&#61;Null&#10;\work_begin_ckpt_count&#61;0&#10;\work_begin_cpu_id_exit&#61;-1&#10;\work_begin_exit_count&#61;0&#10;\work_cpus_ckpt_count&#61;0&#10;\work_end_ckpt_count&#61;0&#10;\work_end_exit_count&#61;0&#10;\work_item_id&#61;-1&#10;\workload&#61;system.workload";
+subgraph cluster_system_workload {
+color="#000000";
+fillcolor="#bab6ae";
+fontcolor="#000000";
+fontname=Arial;
+fontsize=14;
+label="workload \n: StubWorkload";
+shape=box;
+style="rounded, filled";
+tooltip="byte_order&#61;little&#10;\entry&#61;0&#10;\eventq_index&#61;0&#10;\remote_gdb_port&#61;#7000&#10;\wait_for_remote_gdb&#61;false";
+}
+
+subgraph cluster_system_dvfs_handler {
+color="#000000";
+fillcolor="#bab6ae";
+fontcolor="#000000";
+fontname=Arial;
+fontsize=14;
+label="dvfs_handler \n: DVFSHandler";
+shape=box;
+style="rounded, filled";
+tooltip="domains&#61;&#10;\enable&#61;false&#10;\eventq_index&#61;0&#10;\sys_clk_domain&#61;system.clk_domain&#10;\transition_latency&#61;100000000";
+}
+
+subgraph cluster_system_clk_domain {
+color="#000000";
+fillcolor="#bab6ae";
+fontcolor="#000000";
+fontname=Arial;
+fontsize=14;
+label="clk_domain \n: SrcClockDomain";
+shape=box;
+style="rounded, filled";
+tooltip="clock&#61;1000&#10;\domain_id&#61;-1&#10;\eventq_index&#61;0&#10;\init_perf_level&#61;0&#10;\voltage_domain&#61;system.clk_domain.voltage_domain";
+subgraph cluster_system_clk_domain_voltage_domain {
+color="#000000";
+fillcolor="#9f9c95";
+fontcolor="#000000";
+fontname=Arial;
+fontsize=14;
+label="voltage_domain \n: VoltageDomain";
+shape=box;
+style="rounded, filled";
+tooltip="eventq_index&#61;0&#10;\voltage&#61;1.0";
+}
+
+}
+
+subgraph cluster_system_chiplet_link {
+color="#000000";
+fillcolor="#bab6ae";
+fontcolor="#000000";
+fontname=Arial;
+fontsize=14;
+label="chiplet_link \n: SimpleChipletLink";
+shape=box;
+style="rounded, filled";
+tooltip="bandwidth&#61;16&#10;\baseLatency&#61;1&#10;\bitErrorRate&#61;1e-12&#10;\encodingOverhead&#61;1.0&#10;\eventq_index&#61;0&#10;\linkWidth&#61;16&#10;\protocol&#61;0&#10;\randomSeed&#61;0";
+system_chiplet_link_plp_port [color="#000000", fillcolor="#94918b", fontcolor="#000000", fontname=Arial, fontsize=14, label=plp_port, shape=box, style="rounded, filled"];
+}
+
+subgraph cluster_system_packet_gen {
+color="#000000";
+fillcolor="#bab6ae";
+fontcolor="#000000";
+fontname=Arial;
+fontsize=14;
+label="packet_gen \n: PacketGenerator";
+shape=box;
+style="rounded, filled";
+tooltip="Protocol&#61;1&#10;\eventq_index&#61;0&#10;\latency&#61;1&#10;\packet_num&#61;10";
+system_packet_gen_plp_port [color="#000000", fillcolor="#94918b", fontcolor="#000000", fontname=Arial, fontsize=14, label=plp_port, shape=box, style="rounded, filled"];
+}
+
+}
+
+}
+
+system_packet_gen_plp_port -> system_chiplet_link_plp_port  [dir=forward];
+}

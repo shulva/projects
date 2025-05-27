@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" remoteFilesAllowedToDisappearOnAutoupload="false" confirmBeforeUploading="false">
+    <option name="confirmBeforeUploading" value="false" />
+    <serverData>
+      <paths name="远程主机 (3eb74a86-5ac1-426a-a000-a0a29cdb29c2)">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/shulva/gem5/src/expr" local="$PROJECT_DIR$/src" web="/" />
+            <mapping deploy="/home/shulva/gem5/m5out" local="$PROJECT_DIR$/m5out" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+  </component>
+</project>

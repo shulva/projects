@@ -17,14 +17,8 @@ add_executable(gem5
         src/protocol_converter/converters/ProtocolConverter.cc
         src/protocol_converter/converters/ProtocolConverter.hh
         src/protocol_converter/converters/UCIeConverter.hh
-        src/protocol_converter/link_layer/PCIeLinkLayer.cc
-        src/protocol_converter/link_layer/PCIeLinkLayer.hh
-        src/protocol_converter/link_layer/UnifiedLinkLayer.hh
         src/protocol_converter/packet/PLP.hh
-        src/protocol_converter/packet/TLP.cc
-        src/protocol_converter/packet/TLP.hh
         src/protocol_converter/phy_abstraction/SimpleChipletLink.cc
         src/protocol_converter/phy_abstraction/SimpleChipletLink.hh
         src/protocol_converter/upf/UPF.hh
-        src/protocol_converter/GenericPacketProcessor.cc
-        src/protocol_converter/GenericPacketProcessor.hh)
+)

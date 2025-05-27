@@ -3,9 +3,8 @@
  * 简单芯粒链路物理层抽象模型实现文件
  */
 
-#include "expr/protocol_converter/phy_abstraction/SimpleChipletLink.hh"
+#include "SimpleChipletLink.hh"
 #include "base/trace.hh"
-#include "debug/SimpleChipletLink.hh"
 #include "params/SimpleChipletLink.hh"
 #include "sim/system.hh"
 #include <cmath>
@@ -21,9 +20,10 @@ SimpleChipletLink::SimpleChipletLink(const SimpleChipletLinkParams &p)
       linkWidth(p.linkWidth),
       encodingOverhead(p.encodingOverhead),
       linkState(LINK_DOWN),
-      transferMode(MODE_NON_FLIT)
+      transferMode(MODE_NON_FLIT),
+      phy_port( "SimpleChipletLink.phy_port", this)
 {
-    DPRINTF(SimpleChipletLink, "创建芯粒链路物理层: 带宽=%llu Gbps, 基础延迟=%llu ps, BER=%e\n",bandwidth, baseLatency, bitErrorRate);
+    DPRINTF(SimpleChipletLink, "创建物理层: 带宽=%llu Gbps, 基础延迟=%llu ps, BER=%e\n",bandwidth, baseLatency, bitErrorRate);
 }
 
 void
@@ -32,7 +32,7 @@ SimpleChipletLink::init()
     // 调用父类初始化
     SimObject::init();
 
-    DPRINTF(SimpleChipletLink, "芯粒链路物理层初始化\n");
+    DPRINTF(SimpleChipletLink, "芯粒初始化\n");
 }
 
 void
@@ -49,7 +49,7 @@ SimpleChipletLink::startup()
                                      name() + ".linkTrainingEvent", true),
              curTick() + 1000);
 
-    DPRINTF(SimpleChipletLink, "芯粒链路物理层启动，开始链路训练\n");
+    DPRINTF(SimpleChipletLink, "物理层启动，开始链路训练\n");
 }
 
 void
@@ -97,22 +97,33 @@ SimpleChipletLink::getProtocolType() const // 移除参数
     return protocolType;
 }
 
-PhyPacket*
-SimpleChipletLink::receivePacket()
+void SimpleChipletLink::receivePacket()
 {
-    // 接收数据包
-    if (rxQueue.empty()) {
-        return nullptr;
+    if (!hasPacket()) {
+        return;
     }
 
     // 从接收队列中取出数据包
-    PhyPacket* packet = rxQueue.front();
+    PhysicalLayerPacket packet = rxQueue.front();
     rxQueue.pop();
 
-    DPRINTF(SimpleChipletLink, "接收数据包，类型: %s，大小: %d 字节，协议: %d\n",
-            packet->isDLLP ? "DLLP" : "TLP", packet->size, packet->protocol);
-
-    return packet;
+    DPRINTF(SimpleChipletLink, "处理接收数据包, 大小: %d 字节\n", packet.getSize());
+    
+    // 根据协议类型和数据包类型进行处理
+    PhyProtocolType protocol = identifyProtocol(&packet);
+    PhyPacketType packetType = identifyPacketType(&packet);
+    
+    // 这里可以添加更多的处理逻辑，例如：
+    // 1. 解析PLP包中的TLP数据
+    // 2. 将TLP数据传递给上层协议处理
+    // 3. 生成响应等
+    
+    // 如果队列中还有数据包，继续处理
+    if (hasPacket()) {
+        schedule(new EventFunctionWrapper([this]{ receivePacket(); },
+                                         name() + ".processPacketEvent", true),
+                 curTick() + baseLatency);
+    }
 }
 
 bool
@@ -121,26 +132,6 @@ SimpleChipletLink::hasPacket() const
     // 检查是否有数据包可接收
     return !rxQueue.empty();
 }
-
-// 添加 sendPacket 方法的实现
-bool
-SimpleChipletLink::sendPacket(void* data, uint32_t size)
-{
-    DPRINTF(SimpleChipletLink, "发送通用数据包，大小: %d 字节\n", size);
-
-    // 检查链路状态
-    if (linkState != LINK_UP) {
-        DPRINTF(SimpleChipletLink, "链路未就绪，无法发送通用数据包\n");
-        return false;
-    }
-
-    // 对于通用数据包，假设它不是DLLP，协议类型未知或默认为PCIE
-    // 这里我们调用 handleSendPacket，isDLLP设为false，协议类型设为 PROTOCOL_UNKNOWN
-    handleSendPacket(data, size, false, PROTOCOL_UNKNOWN);
-
-    return true;
-}
-
 
 Tick
 SimpleChipletLink::calculateTransferDelay(uint32_t size) const
@@ -169,10 +160,7 @@ SimpleChipletLink::simulateBitError(uint32_t size) const
     double errorProb = 1.0 - pow(1.0 - bitErrorRate, size * 8);
 
     // 生成随机数判断是否发生错误
-    if (dist(rng) < errorProb) {
-        DPRINTF(SimpleChipletLink, "模拟位错误: 发生错误\n");
-        return ERROR_BIT;
-    }
+    DPRINTF(SimpleChipletLink, "模拟位错误: 发生错误\n");
 
     return ERROR_NONE;
 }
@@ -186,49 +174,39 @@ SimpleChipletLink::send_phy2link(const void* data, uint32_t size, bool isDLLP, P
     Tick delay = calculateTransferDelay(size);
 
     // 创建数据包
-    PhyPacket* packet = new PhyPacket(data, curTick() + delay); // 修正构造函数调用
 
     // 调度接收事件
-    schedule(new EventFunctionWrapper([this,packet]{handleReceiveEven(packet);},
-                                      name() + ".receiveEvent", true),curTick()+delay);
+    //schedule(new EventFunctionWrapper([this,packet]{handleReceiveEven(packet);},
+    //                                   name() + ".receiveEvent", true),curTick()+delay);
 
     DPRINTF(SimpleChipletLink, "调度接收事件: 延迟=%llu ps, 类型=%s, 协议=%d\n",
             delay, isDLLP ? "DLLP" : "TLP", protocol);
 }
 
 void
-SimpleChipletLink::receive_PLP(PhyPacket* packet)
+SimpleChipletLink::receive_PLP(PhysicalLayerPacket* packet)
 {
     // 处理接收数据包事件
 
-    // 识别协议类型和数据包类型
-    PhyProtocolType protocol = identifyProtocol(packet);
-    PhyPacketType packetType = identifyPacketType(packet);
+    DPRINTF(SimpleChipletLink, "接收PLP包:  大小=%d 字节\n",packet->getSize());
 
-    DPRINTF(SimpleChipletLink, "处理接收事件: 协议=%d, 类型=%d, 大小=%d 字节, 错误=%d\n",
-            protocol, packetType, packet->getSize(), packet->error);
-
-    // 如果有链路层回调，则直接调用，并传递协议类型和数据包类型
-    if (linkLayerCallback) {
-        bool result = linkLayerCallback(packet); // 修正回调参数
-
-        if (!result) {
-            DPRINTF(SimpleChipletLink, "链路层处理失败，将数据包加入接收队列\n");
-            rxQueue.push(packet);
-        } else {
-            // 链路层已处理，无需保存数据包
-            delete packet;
-        }
-    } else {
-        // 没有回调，将数据包加入接收队列
-        DPRINTF(SimpleChipletLink, "无链路层回调，将数据包加入接收队列\n");
-        rxQueue.push(packet);
+    // 将数据包加入接收队列
+    rxQueue.push(*packet);
+    
+    // 处理接收到的数据包
+    if (hasPacket()) {
+        // 可以在这里添加处理逻辑，例如调度一个事件来处理接收队列中的数据包
+        schedule(new EventFunctionWrapper([this]{ receivePacket(); },
+                                         name() + ".processPacketEvent", true),
+                 curTick() + baseLatency);
     }
+    
+    // 释放内存
+    delete packet;
 }
 
-
 PhyProtocolType
-SimpleChipletLink::identifyProtocol(const PhyPacket* packet) const
+SimpleChipletLink::identifyProtocol(const PhysicalLayerPacket* packet) const
 {
     // 根据数据包格式识别协议类型
 
@@ -252,7 +230,7 @@ SimpleChipletLink::identifyProtocol(const PhyPacket* packet) const
 }
 
 PhyPacketType
-SimpleChipletLink::identifyPacketType(const PhyPacket* packet) const
+SimpleChipletLink::identifyPacketType(const PhysicalLayerPacket* packet) const
 {
     // 根据数据包格式识别数据包类型
 
@@ -276,7 +254,7 @@ SimpleChipletLink::identifyPacketType(const PhyPacket* packet) const
 }
 
 bool
-SimpleChipletLink::isPCIeTLP(const PhyPacket* packet) const
+SimpleChipletLink::isPCIeTLP(const PhysicalLayerPacket* packet) const
 {
     // 检查是否为PCIe TLP
 
@@ -304,7 +282,7 @@ SimpleChipletLink::isPCIeTLP(const PhyPacket* packet) const
 }
 
 bool
-SimpleChipletLink::isPCIeDLLP(const PhyPacket* packet) const
+SimpleChipletLink::isPCIeDLLP(const PhysicalLayerPacket* packet) const
 {
     // 检查是否为PCIe DLLP
 
@@ -331,7 +309,7 @@ SimpleChipletLink::isPCIeDLLP(const PhyPacket* packet) const
 }
 
 bool
-SimpleChipletLink::isCXLTLP(const PhyPacket* packet) const
+SimpleChipletLink::isCXLTLP(const PhysicalLayerPacket* packet) const
 {
     // 检查是否为CXL TLP
 
@@ -359,7 +337,7 @@ SimpleChipletLink::isCXLTLP(const PhyPacket* packet) const
 }
 
 bool
-SimpleChipletLink::isCXLDLLP(const PhyPacket* packet) const
+SimpleChipletLink::isCXLDLLP(const PhysicalLayerPacket* packet) const
 {
     // 检查是否为CXL DLLP
 
@@ -386,7 +364,7 @@ SimpleChipletLink::isCXLDLLP(const PhyPacket* packet) const
 }
 
 bool
-SimpleChipletLink::isUCIeFlit(const PhyPacket* packet) const
+SimpleChipletLink::isUCIeFlit(const PhysicalLayerPacket* packet) const
 {
     // 检查是否为UCIe Flit
 

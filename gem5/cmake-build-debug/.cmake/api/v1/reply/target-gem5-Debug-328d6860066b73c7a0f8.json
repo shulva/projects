@@ -118,7 +118,8 @@
 				6,
 				10,
 				12,
-				15
+				15,
+				18
 			]
 		}
 	],
@@ -161,7 +162,8 @@
 				11,
 				13,
 				14,
-				16
+				16,
+				17
 			]
 		},
 		{
@@ -173,7 +175,8 @@
 				6,
 				10,
 				12,
-				15
+				15,
+				18
 			]
 		}
 	],
@@ -269,6 +272,17 @@
 			"backtrace" : 1,
 			"path" : "src/protocol_converter/GenericPacketProcessor.hh",
 			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "src/protocol_converter/packet/PacketGenerator.hh",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/protocol_converter/packet/PacketGenerator.cc",
+			"sourceGroupIndex" : 1
 		}
 	],
 	"type" : "EXECUTABLE"
