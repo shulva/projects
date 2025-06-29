@@ -13,3 +13,6 @@ class ProtocolConverter(SimObject):
     # 基本参数
     sourceProtocolName = Param.String("PCIe")
     targetProtocolName = Param.String("PCIe")
+
+    protocol_to_link_port = MasterPort("protocol send to link")
+    link_to_protocol_port = SlavePort("link send to protocol")

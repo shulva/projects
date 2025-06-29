@@ -111,9 +111,6 @@ class SimpleChipletLink : public SimObject
     // 发送DLLP
     bool sendDLLP(void* dllp, uint32_t size, PhyProtocolType protocol);
 
-    //处理发送的物理层数据包 //phy->link
-    void send_phy2link(const void* data, uint32_t size, bool isDLLP, PhyProtocolType protocol); // 修正参数类型和名称
-    
     // 处理接收的物理层数据包 // port->phy PLP包
     void receive_PLP(PhysicalLayerPacket* packet);
 
@@ -134,7 +131,7 @@ class SimpleChipletLink : public SimObject
     PhyTransferMode transferMode; // 传输模式
 
     //-----------------------------------------------port
-    class PLPPort : public SlavePort {
+    class PLPPort : public SlavePort { // generator to phy slave port
     public:
         PLPPort(const std::string &name, SimpleChipletLink *owner)
                 : SlavePort(name, owner), owner(owner) {}
@@ -183,9 +180,40 @@ class SimpleChipletLink : public SimObject
     private:
         SimpleChipletLink *owner;
     };
-    PLPPort phy_port; //接受PLP的port
 
-    class Phy_to_Link_Port : public MasterPort {
+    class Link_to_Phy_Port:  public SlavePort { // generator to phy slave port
+    public:
+        Link_to_Phy_Port(const std::string &name, SimpleChipletLink *owner)
+                : SlavePort(name, owner), owner(owner) {}
+
+    protected:
+        bool recvTimingReq(PacketPtr pkt) override {
+            DPRINTF(SimpleChipletLink, "收到来自链路层的转换包\n");
+            //TODO:将其重新包装成PLP并发送
+
+            return true;
+        }
+
+        AddrRangeList getAddrRanges() const override {
+            AddrRangeList ranges;
+            ranges.push_back(AddrRange(0x1000, 0x1FFF));  // 地址范围：0x1000 ~ 0x1FFF,暂时写一个
+            return ranges;
+        }
+
+        Tick recvAtomic(PacketPtr pkt) override {
+        }
+
+        void recvRespRetry() override {
+        }
+
+        void recvFunctional(PacketPtr pkt) override {
+        }
+
+    private:
+        SimpleChipletLink *owner;
+    };
+
+    class Phy_to_Link_Port : public MasterPort { // phy to link master port
     public:
         Phy_to_Link_Port(const std::string &name, SimpleChipletLink *owner)
                 : MasterPort(name, owner) {
@@ -196,11 +224,18 @@ class SimpleChipletLink : public SimObject
         void recvReqRetry() override {};
         SimpleChipletLink  *owner;
     };
-    Phy_to_Link_Port phy2link_port;//发送DLP/TLP的port
+
+    PLPPort phy_port; //接受PLP的port
+    Phy_to_Link_Port phy_to_link_port;//发送DLP/TLP的port
+    Link_to_Phy_Port link_to_phy_slaveport;
 
     Port &getPort(const std::string &if_name, PortID idx=InvalidPortID) override {
-        if (if_name == "plp_port")
+        if (if_name == "phy_port")
             return phy_port;
+        else if(if_name == "phy_to_link_port")
+            return phy_to_link_port;
+        else if(if_name == "link_to_phy_slaveport")
+            return link_to_phy_slaveport;
         else
             return SimObject::getPort(if_name, idx);
     }

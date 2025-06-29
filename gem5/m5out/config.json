@@ -64,10 +64,20 @@
             "linkWidth": 16,
             "protocol": 0,
             "randomSeed": 0,
-            "plp_port": {
+            "link_to_phy_slaveport": {
+                "role": "GEM5 RESPONDER",
+                "peer": "system.link.link_to_phy_masterport",
+                "is_source": "False"
+            },
+            "phy_port": {
                 "role": "GEM5 RESPONDER",
                 "peer": "system.packet_gen.plp_port",
                 "is_source": "False"
+            },
+            "phy_to_link_port": {
+                "role": "GEM5 REQUESTOR",
+                "peer": "system.link.link_to_phy_Port",
+                "is_source": "True"
             }
         },
         "clk_domain": {
@@ -103,6 +113,35 @@
             "sys_clk_domain": "system.clk_domain",
             "transition_latency": 100000000
         },
+        "link": {
+            "type": "LinkLayer",
+            "cxx_class": "gem5::LinkLayer",
+            "name": "link",
+            "path": "system.link",
+            "eventq_index": 0,
+            "to_converter_buffer_size": 32,
+            "to_phy_buffer_size": 32,
+            "converter_to_link_slaveport": {
+                "role": "GEM5 RESPONDER",
+                "peer": "system.protocol.protocol_to_link_port",
+                "is_source": "False"
+            },
+            "link_to_converter_Port": {
+                "role": "GEM5 REQUESTOR",
+                "peer": "system.protocol.link_to_protocol_port",
+                "is_source": "True"
+            },
+            "link_to_phy_Port": {
+                "role": "GEM5 RESPONDER",
+                "peer": "system.chiplet_link.phy_to_link_port",
+                "is_source": "False"
+            },
+            "link_to_phy_masterport": {
+                "role": "GEM5 REQUESTOR",
+                "peer": "system.chiplet_link.link_to_phy_slaveport",
+                "is_source": "True"
+            }
+        },
         "packet_gen": {
             "type": "PacketGenerator",
             "cxx_class": "gem5::PacketGenerator",
@@ -110,11 +149,30 @@
             "path": "system.packet_gen",
             "Protocol": 1,
             "eventq_index": 0,
-            "latency": 1,
-            "packet_num": 10,
+            "latency": 2,
+            "packet_num": 2,
             "plp_port": {
                 "role": "GEM5 REQUESTOR",
-                "peer": "system.chiplet_link.plp_port",
+                "peer": "system.chiplet_link.phy_port",
+                "is_source": "True"
+            }
+        },
+        "protocol": {
+            "type": "ProtocolConverter",
+            "cxx_class": "gem5::ProtocolConverter",
+            "name": "protocol",
+            "path": "system.protocol",
+            "eventq_index": 0,
+            "sourceProtocolName": "PCIe",
+            "targetProtocolName": "PCIe",
+            "link_to_protocol_port": {
+                "role": "GEM5 RESPONDER",
+                "peer": "system.link.link_to_converter_Port",
+                "is_source": "False"
+            },
+            "protocol_to_link_port": {
+                "role": "GEM5 REQUESTOR",
+                "peer": "system.link.converter_to_link_slaveport",
                 "is_source": "True"
             }
         }

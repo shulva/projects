@@ -21,7 +21,9 @@ SimpleChipletLink::SimpleChipletLink(const SimpleChipletLinkParams &p)
       encodingOverhead(p.encodingOverhead),
       linkState(LINK_DOWN),
       transferMode(MODE_NON_FLIT),
-      phy_port( "SimpleChipletLink.phy_port", this)
+      phy_port( "SimpleChipletLink.phy_port", this),
+      phy_to_link_port( "SimpleChipletLink.phy_to_link_port", this),
+      link_to_phy_slaveport( "SimpleChipletLink.link_to_phy_slaveport", this)
 {
     DPRINTF(SimpleChipletLink, "创建物理层: 带宽=%llu Gbps, 基础延迟=%llu ps, BER=%e\n",bandwidth, baseLatency, bitErrorRate);
 }
@@ -166,43 +168,42 @@ SimpleChipletLink::simulateBitError(uint32_t size) const
 }
 
 void
-SimpleChipletLink::send_phy2link(const void* data, uint32_t size, bool isDLLP, PhyProtocolType protocol) // 修正参数
-{
-    // 处理发送数据包
-
-    // 计算传输延迟
-    Tick delay = calculateTransferDelay(size);
-
-    // 创建数据包
-
-    // 调度接收事件
-    //schedule(new EventFunctionWrapper([this,packet]{handleReceiveEven(packet);},
-    //                                   name() + ".receiveEvent", true),curTick()+delay);
-
-    DPRINTF(SimpleChipletLink, "调度接收事件: 延迟=%llu ps, 类型=%s, 协议=%d\n",
-            delay, isDLLP ? "DLLP" : "TLP", protocol);
-}
-
-void
 SimpleChipletLink::receive_PLP(PhysicalLayerPacket* packet)
 {
-    // 处理接收数据包事件
 
-    DPRINTF(SimpleChipletLink, "接收PLP包:  大小=%d 字节\n",packet->getSize());
+    const uint8_t* data = packet->getData();
+    // 从PLP中提取数据
+    /* 调试用
+    DPRINTF(SimpleChipletLink, "PLP起始标记: 0x%02x\n", static_cast<uint8_t>(packet->startSymbol));
 
-    // 将数据包加入接收队列
-    rxQueue.push(*packet);
-    
-    // 处理接收到的数据包
-    if (hasPacket()) {
-        // 可以在这里添加处理逻辑，例如调度一个事件来处理接收队列中的数据包
-        schedule(new EventFunctionWrapper([this]{ receivePacket(); },
-                                         name() + ".processPacketEvent", true),
-                 curTick() + baseLatency);
+    DPRINTF(SimpleChipletLink, "PLP内容: ");
+    for(size_t i = 0; i < packet->getSize(); i++) {
+        DPRINTF(SimpleChipletLink, "%02x \n ", data[i]);
     }
-    
-    // 释放内存
+
+    DPRINTF(SimpleChipletLink, "PLP结束标记: 0x%02x\n", static_cast<uint8_t>(packet->endSymbol));
+     */
+
+    // 创建新的Request和Packet用于传输
+    RequestPtr req = std::make_shared<Request>(0x1000, packet->getSize(), 0, 0);
+    PacketPtr pkt = new Packet(req, MemCmd::WriteReq);
+
+    // 创建新的缓冲区来存储数据副本 绕开const指针
+    uint8_t* modifiable_data = new uint8_t[packet->getSize()];
+    std::memcpy(modifiable_data, data, packet->getSize());
+    pkt->dataDynamic(modifiable_data);
+
+
+    bool success = phy_to_link_port.sendTimingReq(pkt);
+    if (!success) {
+        rxQueue.push(*packet);
+        DPRINTF(SimpleChipletLink, "PHY:发送失败，数据包加入接收队列\n");
+    } else {
+        DPRINTF(SimpleChipletLink, "PHY:成功发送数据包到链路层\n");
+    }
+
     delete packet;
+
 }
 
 PhyProtocolType

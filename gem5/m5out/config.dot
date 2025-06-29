@@ -78,7 +78,9 @@ label="chiplet_link \n: SimpleChipletLink";
 shape=box;
 style="rounded, filled";
 tooltip="bandwidth&#61;16&#10;\baseLatency&#61;1&#10;\bitErrorRate&#61;1e-12&#10;\encodingOverhead&#61;1.0&#10;\eventq_index&#61;0&#10;\linkWidth&#61;16&#10;\protocol&#61;0&#10;\randomSeed&#61;0";
-system_chiplet_link_plp_port [color="#000000", fillcolor="#94918b", fontcolor="#000000", fontname=Arial, fontsize=14, label=plp_port, shape=box, style="rounded, filled"];
+system_chiplet_link_phy_port [color="#000000", fillcolor="#94918b", fontcolor="#000000", fontname=Arial, fontsize=14, label=phy_port, shape=box, style="rounded, filled"];
+system_chiplet_link_phy_to_link_port [color="#000000", fillcolor="#94918b", fontcolor="#000000", fontname=Arial, fontsize=14, label=phy_to_link_port, shape=box, style="rounded, filled"];
+system_chiplet_link_link_to_phy_slaveport [color="#000000", fillcolor="#94918b", fontcolor="#000000", fontname=Arial, fontsize=14, label=link_to_phy_slaveport, shape=box, style="rounded, filled"];
 }
 
 subgraph cluster_system_packet_gen {
@@ -90,13 +92,47 @@ fontsize=14;
 label="packet_gen \n: PacketGenerator";
 shape=box;
 style="rounded, filled";
-tooltip="Protocol&#61;1&#10;\eventq_index&#61;0&#10;\latency&#61;1&#10;\packet_num&#61;10";
+tooltip="Protocol&#61;1&#10;\eventq_index&#61;0&#10;\latency&#61;2&#10;\packet_num&#61;2";
 system_packet_gen_plp_port [color="#000000", fillcolor="#94918b", fontcolor="#000000", fontname=Arial, fontsize=14, label=plp_port, shape=box, style="rounded, filled"];
 }
 
+subgraph cluster_system_link {
+color="#000000";
+fillcolor="#bab6ae";
+fontcolor="#000000";
+fontname=Arial;
+fontsize=14;
+label="link \n: LinkLayer";
+shape=box;
+style="rounded, filled";
+tooltip="eventq_index&#61;0&#10;\to_converter_buffer_size&#61;32&#10;\to_phy_buffer_size&#61;32";
+system_link_link_to_phy_Port [color="#000000", fillcolor="#94918b", fontcolor="#000000", fontname=Arial, fontsize=14, label=link_to_phy_Port, shape=box, style="rounded, filled"];
+system_link_link_to_converter_Port [color="#000000", fillcolor="#94918b", fontcolor="#000000", fontname=Arial, fontsize=14, label=link_to_converter_Port, shape=box, style="rounded, filled"];
+system_link_converter_to_link_slaveport [color="#000000", fillcolor="#94918b", fontcolor="#000000", fontname=Arial, fontsize=14, label=converter_to_link_slaveport, shape=box, style="rounded, filled"];
+system_link_link_to_phy_masterport [color="#000000", fillcolor="#94918b", fontcolor="#000000", fontname=Arial, fontsize=14, label=link_to_phy_masterport, shape=box, style="rounded, filled"];
+}
+
+subgraph cluster_system_protocol {
+color="#000000";
+fillcolor="#bab6ae";
+fontcolor="#000000";
+fontname=Arial;
+fontsize=14;
+label="protocol \n: ProtocolConverter";
+shape=box;
+style="rounded, filled";
+tooltip="eventq_index&#61;0&#10;\sourceProtocolName&#61;PCIe&#10;\targetProtocolName&#61;PCIe";
+system_protocol_protocol_to_link_port [color="#000000", fillcolor="#94918b", fontcolor="#000000", fontname=Arial, fontsize=14, label=protocol_to_link_port, shape=box, style="rounded, filled"];
+system_protocol_link_to_protocol_port [color="#000000", fillcolor="#94918b", fontcolor="#000000", fontname=Arial, fontsize=14, label=link_to_protocol_port, shape=box, style="rounded, filled"];
 }
 
 }
 
-system_packet_gen_plp_port -> system_chiplet_link_plp_port  [dir=forward];
+}
+
+system_packet_gen_plp_port -> system_chiplet_link_phy_port  [dir=forward];
+system_link_link_to_phy_Port -> system_chiplet_link_phy_to_link_port  [dir=back];
+system_link_link_to_phy_masterport -> system_chiplet_link_link_to_phy_slaveport  [dir=forward];
+system_protocol_protocol_to_link_port -> system_link_converter_to_link_slaveport  [dir=forward];
+system_protocol_link_to_protocol_port -> system_link_link_to_converter_Port  [dir=back];
 }

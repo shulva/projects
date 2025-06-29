@@ -1,81 +1,63 @@
-/*
- * ProtocolConverter.hh
- * 协议转换器基类头文件
- */
+#pragma once
 
-#ifndef __PROTOCOL_CONVERTER_CONVERTERS_PROTOCOL_CONVERTER_HH__
-#define __PROTOCOL_CONVERTER_CONVERTERS_PROTOCOL_CONVERTER_HH__
-
-#include <memory>
-#include <string>
-#include "sim/sim_object.hh"
-#include "../link_layer/PCIeLinkLayer.hh"
+#include "mem/packet.hh"
+#include "mem/port.hh"
 #include "params/ProtocolConverter.hh"
-#include "../packet/TLP.hh"
-#include "../upf/UPF.hh"
+#include "sim/sim_object.hh"
+#include "debug/ProtocolConverter.hh"
 
-namespace gem5 {
-    enum class ConversionResult {
-        SUCCESS,                // 转换成功
-        ERROR,                  // 一般错误
-        UNSUPPORTED_FEATURE,    // 不支持的特性
-        INVALID_PACKET,         // 无效的数据包
-        BUFFER_OVERFLOW         // 缓冲区溢出
-    };
-// 协议转换器基类
+#include <queue>
+
+namespace gem5
+{
+
 class ProtocolConverter : public SimObject
 {
   public:
-    // 转换结果枚举
-    
-    // 构造函数
-    ProtocolConverter(const ProtocolConverterParams& params);
-    
-    // 初始化
-    void init() override;
-    
-    // 启动
+    ProtocolConverter(const ProtocolConverterParams &p);
+
     void startup() override;
-    
-    // 设置链路层A
-    void setLinkLayerA(PCIeLinkLayer* linkLayer);
-    
-    // 设置链路层B
-    void setLinkLayerB(PCIeLinkLayer* linkLayer);
-    
-    // 源协议到UPF的转换（纯虚函数）
-    virtual ConversionResult sourceToUPF(void* sourcePacket, 
-                                       std::shared_ptr<upf::Packet>& upfPacket) = 0;
-    
-    // UPF到目标协议的转换（纯虚函数）
-    virtual ConversionResult UPFToTarget(const std::shared_ptr<upf::Packet>& upfPacket,
-                                       void*& targetPacket) = 0;
-    
-    // 处理从链路层A接收的数据包
-    bool handlePacketFromLinkLayerA(PCIe::TLP* tlp);
-    
-    // 处理从链路层B接收的数据包
-    bool handlePacketFromLinkLayerB(PCIe::TLP* tlp);
-    
-    // 发送数据包到链路层A
-    bool sendPacketToLinkLayerA(void* packet);
-    
-    // 发送数据包到链路层B
-    bool sendPacketToLinkLayerB(void* packet);
-    
-    // 转换并转发数据包
-    bool convertAndForward(void* sourcePacket, bool fromA);
-    
-  protected:
+
+  private:
+    // 上行端口，连接到linkl
+    class Link_to_Protocol : public SlavePort
+    {
+      private:
+        ProtocolConverter *owner;
+      public:
+        Link_to_Protocol(const std::string &name, ProtocolConverter *owner)
+            : SlavePort(name, owner), owner(owner) {}
+
+      protected:
+        Tick recvAtomic(PacketPtr pkt) override;
+        void recvFunctional(PacketPtr pkt) override;
+        bool recvTimingReq(PacketPtr pkt) override;
+        void recvRespRetry() override {}
+        AddrRangeList getAddrRanges() const override;
+    };
+
+    // 下行端口，连接到link
+    class Protocol_to_Link : public MasterPort
+    {
+      private:
+        ProtocolConverter *owner;
+      public:
+        Protocol_to_Link(const std::string &name, ProtocolConverter *owner)
+            : MasterPort(name, owner), owner(owner) {}
+
+      protected:
+        bool recvTimingResp(PacketPtr pkt) override;
+        void recvReqRetry() override;
+    };
+
+    Link_to_Protocol link_to_protocol_port;
+    Protocol_to_Link protocol_to_link_port;
+
+    Port &getPort(const std::string &if_name, PortID idx = InvalidPortID) override;
+
     // 协议名称
-    std::string sourceProtocolName;
-    std::string targetProtocolName;
-    
-    // 链路层指针
-    PCIeLinkLayer* linkLayerA;
-    PCIeLinkLayer* linkLayerB;
+    const std::string sourceProtocolName;
+    const std::string targetProtocolName;
 };
 
-} // namespace gem5
-
-#endif // __PROTOCOL_CONVERTER_CONVERTERS_PROTOCOL_CONVERTER_HH__
+}

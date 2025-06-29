@@ -74,17 +74,28 @@ PacketGenerator::generatePLP(const TLP& tlp)
 }
 
 bool
-PacketGenerator::sendPLP(const PhysicalLayerPacket& plp)
-{
+PacketGenerator::sendPLP(const PhysicalLayerPacket& plp) {
+    // 计算总大小：起始标记(1字节) + payload大小 + 结束标记(1字节)
+    const uint32_t total_size = 1 + plp.payload.size() + 1;
+    
     // 创建请求
-    RequestPtr req = std::make_shared<Request>(0x1010, plp.getSize(), 0, 0);
+    RequestPtr req = std::make_shared<Request>(0x1010, total_size, 0, 0);
     
     // 创建数据包
     PacketPtr pkt = new Packet(req, MemCmd::WriteReq);
     
-    // 设置数据
-    uint8_t* pkt_data = new uint8_t[plp.getSize()];
-    std::memcpy(pkt_data, plp.getData(), plp.getSize());
+    // 分配并填充完整PLP包数据
+    uint8_t* pkt_data = new uint8_t[total_size];
+    
+    // 填充起始标记
+    pkt_data[0] = static_cast<uint8_t>(plp.startSymbol);
+    
+    // 填充payload
+    std::memcpy(pkt_data + 1, plp.payload.data(), plp.payload.size());
+    
+    // 填充结束标记
+    pkt_data[total_size - 1] = static_cast<uint8_t>(plp.endSymbol);
+    
     pkt->dataDynamic(pkt_data);
     
     // 通过端口发送

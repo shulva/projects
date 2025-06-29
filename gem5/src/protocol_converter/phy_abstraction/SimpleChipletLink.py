@@ -20,3 +20,5 @@ class SimpleChipletLink(SimObject):
     # 随机数种子
     randomSeed = Param.UInt32(0, "随机数生成器种子")
     phy_port = SlavePort("PLP port")
+    phy_to_link_port = MasterPort("P2L port")
+    link_to_phy_slaveport = SlavePort("accept packet form link")

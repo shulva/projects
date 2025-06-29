@@ -14,8 +14,6 @@ add_executable(gem5
         src/protocol_converter/converters/CXLConverter.hh
         src/protocol_converter/converters/PCIeConverter.cc
         src/protocol_converter/converters/PCIeConverter.hh
-        src/protocol_converter/converters/ProtocolConverter.cc
-        src/protocol_converter/converters/ProtocolConverter.hh
         src/protocol_converter/converters/UCIeConverter.hh
         src/protocol_converter/packet/PLP.hh
         src/protocol_converter/phy_abstraction/SimpleChipletLink.cc
