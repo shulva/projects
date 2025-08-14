@@ -1,0 +1,76 @@
+
+<!-- 我只截取了一部分，能体现出宏在处理重复问题上的高效即可 
+    <people>和</people>可以手动去除 
+    讲实话我感觉用正则搜索替换也很高效
+    不过要求用宏就用宏做吧
+    用正则也不是不可以，我就当附加题了
+    我们会在宏里调用宏，节省操作
+    
+     name: qn^r"f>r"a:"<ESC>f<d$a",<ESC>q
+     email:qe^r"f>r"a:"<ESC>f<d$a"<ESC>q
+	 email与name大部分重复，可以在下一步中简略
+     person:qp^d$i{<ESC>j@eA<Caps>,<ESC>j@ej^d$i},<ESC>q 
+     first-PERSON:qa@pjq 
+
+
+	<people> -> "person" : [
+                            ....
+
+    <person>->               {
+    <name> ->                    "name":...,
+    <emial> ->				     "email":...
+    </person> ->             },
+							 ....
+							 {
+						     }
+    </people>			    ] 
+
+    使用查找替换的话，则有
+ 	g/people/d 删除所有people
+    %s/<person>/{/g 替换所有person
+    %s/<\/person>/},/g 替换/person
+	%s/<name>\(.*\)<\/name>/"name": "\1",/g 改变name行
+	%s/<email>\(.*\)<\/email>/"email": "\1"/g 改变email行
+
+-->
+<people>
+    <person>
+        <name>Johnny Zhang Jr.</name>
+        <email>amyalvarez@cole.com</email>
+    </person>
+    <person>
+        <name>Edward Cook</name>
+        <email>dsparks@alvarez-dunn.com</email>
+    </person>
+    <person>
+        <name>Stephen Sweeney</name>
+        <email>dlewis@gmail.com</email>
+	<\person>
+    <person>
+        <name>Krystal Riley</name>
+        <email>jflores@wright.biz</email>
+    </person>
+    <person>
+        <name>Ashley Robinson</name>
+        <email>robertsmichael@yahoo.com</email>
+    </person>
+    <person>
+        <name>Kimberly Brooks</name>
+        <email>sharoncunningham@larson.com</email>
+    </person>
+    <person>
+        <name>Brent Proctor</name>
+        <email>edward86@stewart.com</email>
+    </person>
+    <person>
+        <name>William Roberts</name>
+        <email>parkertodd@webb.com</email>
+    </person>
+    <person>
+        <name>Amanda Morales</name>
+        <email>lorizavala@hodges.com</email>
+    </person>
+</people>
+
+
+

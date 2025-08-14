@@ -1,0 +1,6 @@
+8月 07 17:35:13 shulva systemd[999]: Startup finished in 710ms.
+8月 07 17:35:35 shulva systemd[1]: Startup finished in 13.452s (firmware) + 11.285s (loader) + 1.215s (kernel) + 33.264s (userspace) = 59.218s.
+8月 07 07:14:01 shulva systemd[1017]: Startup finished in 747ms.
+8月 06 23:14:23 shulva systemd[1]: Startup finished in 13.454s (firmware) + 11.288s (loader) + 1.173s (kernel) + 31.914s (userspace) = 57.830s.
+8月 05 00:28:19 shulva systemd[1023]: Startup finished in 836ms.
+8月 05 00:28:42 shulva systemd[1]: Startup finished in 13.468s (firmware) + 11.295s (loader) + 1.218s (kernel) + 31.861s (userspace) = 57.844s.

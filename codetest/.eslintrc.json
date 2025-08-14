@@ -1,0 +1,19 @@
+{
+    // env 表示当前 eslint 使用环境
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    // extends 表示扩展的 eslint
+    "extends": "eslint:recommended",
+    "parserOptions": {
+        "ecmaVersion": 12,
+        "sourceType": "module"
+    },
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+    },
+    "rules": {
+        //eslint-rules中文官网：http://eslint.cn/docs/rules/
+    }
+}

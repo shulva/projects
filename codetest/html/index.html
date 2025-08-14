@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="UTF-">
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="upcontainer">
+            <select id="timezone">
+                <option value="0">UTC</option>
+                <option value="1">UTC+1</option>
+                <option value="2">UTC+2</option>
+                <option value="3">UTC+3</option>
+                <option value="4">UTC+4</option>
+                <option value="5">UTC+5</option>
+                <option value="6">UTC+6</option>
+                <option value="7">UTC+7</option>
+                <option value="8" selected="selected">UTC+8</option>
+                <option value="9">UTC+9</option>
+                <option value="10">UTC+10</option>
+                <option value="11">UTC+11</option>
+                <option value="12">UTC+12</option>
+                <option value="13">UTC-11</option>
+                <option value="14">UTC-10</option>
+                <option value="15">UTC-9</option>
+                <option value="16">UTC-8</option>
+                <option value="17">UTC-7</option>
+                <option value="18">UTC-6</option>
+                <option value="19">UTC-5</option>
+                <option value="20">UTC-4</option>
+                <option value="21">UTC-3</option>
+                <option value="22">UTC-2</option>
+                <option value="23">UTC-1</option>
+            </select>
+            <button id="switch">
+                切换为12小时制
+            </button>
+        </div>
+
+        <div class="downcontainer">
+            <p class="time" id="time">12:12:10</p>
+
+            <p class="daytime" id="period">下午</p>
+        </div>
+
+        <div class="bottomcontainer">
+            <p class="date" id="date">2020年06月18日</p>
+
+            <p class="week" id="day">星期四</p>
+        </div>
+
+    </div>
+
+/body>
+<script type="text/javascript" src="app.js"></script>
+
+</html>

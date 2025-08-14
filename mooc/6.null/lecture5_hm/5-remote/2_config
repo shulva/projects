@@ -1,0 +1,8 @@
+ Host vm
+     User lrh_shulva 
+     HostName 192.168.2.180 
+     IdentityFile ~/.ssh/id_ed25519
+     LocalForward 9999 localhost:8888
+
+5 means you can only use ssh keys to login vm , but not password
+

@@ -1,0 +1,6 @@
+if  ! make ; then
+     echo "build failed, commit rejected"
+     exit 1
+fi
+# 修改.git/hooks 目录下面的pre-commit.sample文件并将其命名为pre-commit
+# make 注意路径

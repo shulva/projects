@@ -1,0 +1,497 @@
+# git blame
+a88b4eac (Anish Athalye 2020-01-17 15:26:30 -0500 18) collections:
+# git show
+commit a88b4eac326483e29bdac5ee0a39b180948ae7fc
+Author: Anish Athalye <me@anishathalye.com>
+Date:   Fri Jan 17 15:26:30 2020 -0500
+
+    Redo lectures as a collection
+
+diff --git a/2020/index.html b/2020/index.html
+deleted file mode 100644
+index 153ddc8..0000000
+--- a/2020/index.html
++++ /dev/null
+@@ -1,5 +0,0 @@
+----
+-layout: redirect
+-redirect: /
+-title: Missing Semester 2020
+----
+diff --git a/2019/automation.md b/_2019/automation.md
+similarity index 100%
+rename from 2019/automation.md
+rename to _2019/automation.md
+diff --git a/2019/backups.md b/_2019/backups.md
+similarity index 100%
+rename from 2019/backups.md
+rename to _2019/backups.md
+diff --git a/2019/command-line.md b/_2019/command-line.md
+similarity index 100%
+rename from 2019/command-line.md
+rename to _2019/command-line.md
+diff --git a/2019/course-overview.md b/_2019/course-overview.md
+similarity index 100%
+rename from 2019/course-overview.md
+rename to _2019/course-overview.md
+diff --git a/2019/data-wrangling.md b/_2019/data-wrangling.md
+similarity index 100%
+rename from 2019/data-wrangling.md
+rename to _2019/data-wrangling.md
+diff --git a/2019/dotfiles.md b/_2019/dotfiles.md
+similarity index 100%
+rename from 2019/dotfiles.md
+rename to _2019/dotfiles.md
+diff --git a/2019/editors.md b/_2019/editors.md
+similarity index 100%
+rename from 2019/editors.md
+rename to _2019/editors.md
+diff --git a/2019/files/example.c b/_2019/files/example.c
+similarity index 100%
+rename from 2019/files/example.c
+rename to _2019/files/example.c
+diff --git a/_2019/index.html b/_2019/index.html
+new file mode 100644
+index 0000000..a90ce94
+--- /dev/null
++++ b/_2019/index.html
+@@ -0,0 +1,48 @@
++---
++layout: page
++title: "2019 Lectures"
++permalink: /2019/
++---
++
++<p>Click on specific topics below to see lecture videos and lecture notes.</p>
++
++<h1>Tuesday, 1/15</h1>
++<ul>
++  <li><a href="/2019/course-overview/">Course overview</a></li>
++  <li><a href="/2019/virtual-machines/">Virtual machines and containers</a></li>
++  <li><a href="/2019/shell/">Shell and scripting</a></li>
++</ul>
++
++<h1>Thursday, 1/17</h1>
++<ul>
++  <li><a href="/2019/command-line/">Command-line environment</a></li>
++  <li><a href="/2019/data-wrangling/">Data wrangling</a></li>
++</ul>
++
++<h1>Tuesday, 1/22</h1>
++<ul>
++  <li><a href="/2019/editors/">Editors</a></li>
++  <li><a href="/2019/version-control/">Version control</a></li>
++</ul>
++
++<h1>Thursday, 1/24</h1>
++<ul>
++  <li><a href="/2019/dotfiles/">Dotfiles</a></li>
++  <li><a href="/2019/backups/">Backups</a></li>
++  <li><a href="/2019/automation/">Automation</a></li>
++  <li><a href="/2019/machine-introspection/">Machine introspection</a></li>
++</ul>
++
++<h1>Tuesday, 1/29</h1>
++<ul>
++  <li><a href="/2019/program-introspection/">Program introspection</a></li>
++  <li><a href="/2019/package-management/">Package/dependency management</a></li>
++  <li><a href="/2019/os-customization/">OS customization</a></li>
++  <li><a href="/2019/remote-machines/">Remote machines</a></li>
++</ul>
++
++<h1>Thursday, 1/31</h1>
++<ul>
++  <li><a href="/2019/web/">Web and browsers</a></li>
++  <li><a href="/2019/security/">Security and privacy</a></li>
++</ul>
+diff --git a/2019/machine-introspection.md b/_2019/machine-introspection.md
+similarity index 100%
+rename from 2019/machine-introspection.md
+rename to _2019/machine-introspection.md
+diff --git a/2019/os-customization.md b/_2019/os-customization.md
+similarity index 100%
+rename from 2019/os-customization.md
+rename to _2019/os-customization.md
+diff --git a/2019/package-management.md b/_2019/package-management.md
+similarity index 100%
+rename from 2019/package-management.md
+rename to _2019/package-management.md
+diff --git a/2019/program-introspection.md b/_2019/program-introspection.md
+similarity index 100%
+rename from 2019/program-introspection.md
+rename to _2019/program-introspection.md
+diff --git a/2019/remote-machines.md b/_2019/remote-machines.md
+similarity index 100%
+rename from 2019/remote-machines.md
+rename to _2019/remote-machines.md
+diff --git a/2019/security.md b/_2019/security.md
+similarity index 100%
+rename from 2019/security.md
+rename to _2019/security.md
+diff --git a/2019/shell.md b/_2019/shell.md
+similarity index 100%
+rename from 2019/shell.md
+rename to _2019/shell.md
+diff --git a/2019/version-control.md b/_2019/version-control.md
+similarity index 100%
+rename from 2019/version-control.md
+rename to _2019/version-control.md
+diff --git a/2019/virtual-machines.md b/_2019/virtual-machines.md
+similarity index 100%
+rename from 2019/virtual-machines.md
+rename to _2019/virtual-machines.md
+diff --git a/2019/web.md b/_2019/web.md
+similarity index 100%
+rename from 2019/web.md
+rename to _2019/web.md
+diff --git a/_2020/command-line.md b/_2020/command-line.md
+new file mode 100644
+index 0000000..ea94662
+--- /dev/null
++++ b/_2020/command-line.md
+@@ -0,0 +1,5 @@
++---
++layout: lecture
++title: "Command-line Environment"
++date: 2019-1-21
++---
+diff --git a/2020/course-shell.md b/_2020/course-shell.md
+similarity index 99%
+rename from 2020/course-shell.md
+rename to _2020/course-shell.md
+index 8615bdf..9acee11 100644
+--- a/2020/course-shell.md
++++ b/_2020/course-shell.md
+@@ -1,7 +1,8 @@
+ ---
+ layout: lecture
+-title: "Course overview + command shell"
+-presenter: Jon
++title: "Course overview + the shell"
++date: 2019-1-13
++ready: true
+ # video:
+ #   aspect: 56.25
+ #   id: qw2c6ffSVOM
+diff --git a/2020/data-wrangling.md b/_2020/data-wrangling.md
+similarity index 99%
+rename from 2020/data-wrangling.md
+rename to _2020/data-wrangling.md
+index a038c20..8959566 100644
+--- a/2020/data-wrangling.md
++++ b/_2020/data-wrangling.md
+@@ -1,7 +1,8 @@
+ ---
+ layout: lecture
+ title: "Data Wrangling"
+-presenter: Jon
++date: 2019-1-16
++ready: true
+ # video:
+ #   aspect: 56.25
+ #   id: VW2jn9Okjhw
+diff --git a/_2020/debugging-profiling.md b/_2020/debugging-profiling.md
+new file mode 100644
+index 0000000..0143fe4
+--- /dev/null
++++ b/_2020/debugging-profiling.md
+@@ -0,0 +1,5 @@
++---
++layout: lecture
++title: "Debugging and Profiling"
++date: 2019-1-23
++---
+diff --git a/2020/editors-notes.txt b/_2020/editors-notes.txt
+similarity index 100%
+rename from 2020/editors-notes.txt
+rename to _2020/editors-notes.txt
+diff --git a/2020/editors.md b/_2020/editors.md
+similarity index 99%
+rename from 2020/editors.md
+rename to _2020/editors.md
+index 28d8274..08a4d75 100644
+--- a/2020/editors.md
++++ b/_2020/editors.md
+@@ -1,7 +1,8 @@
+ ---
+ layout: lecture
+-title: "Editors"
+-presenter: Anish
++title: "Editors (Vim)"
++date: 2019-1-15
++ready: true
+ #video:
+ #  aspect: 62.5
+ #  id: 1vLcusYSrI4
+diff --git a/2020/files/example-data.xml b/_2020/files/example-data.xml
+similarity index 100%
+rename from 2020/files/example-data.xml
+rename to _2020/files/example-data.xml
+diff --git a/2020/files/vimrc b/_2020/files/vimrc
+similarity index 100%
+rename from 2020/files/vimrc
+rename to _2020/files/vimrc
+diff --git a/_2020/index.html b/_2020/index.html
+new file mode 100644
+index 0000000..961789d
+--- /dev/null
++++ b/_2020/index.html
+@@ -0,0 +1,33 @@
++---
++layout: page
++title: "2020 Lectures"
++permalink: /2020/
++phony: true
++excerpt: '' # work around a bug
++---
++
++<ul class="double-spaced">
++  {% assign lectures = site['2020'] | sort: 'date' %}
++  {% for lecture in lectures %}
++    {% if lecture.phony != true %}
++      <li>
++        <strong>{{ lecture.date | date: '%-m/%d' }}</strong>:
++        {% if lecture.ready %}
++          <a href="{{ lecture.url }}">{{ lecture.title }}</a>
++        {% elsif lecture.noclass %}
++          {{ lecture.title }} [no class]
++        {% else %}
++          {{ lecture.title }} [coming soon]
++        {% endif %}
++        {% if lecture.details %}
++          <br>
++          ({{ lecture.details }})
++        {% endif %}
++      </li>
++    {% endif %}
++  {% endfor %}
++</ul>
++
++<h2>Previous year's lectures</h2>
++
++<p>You can find lecture notes and videos from <a href="/2019/">last year's version of this class</a>.</p>
+diff --git a/_2020/metaprogramming.md b/_2020/metaprogramming.md
+new file mode 100644
+index 0000000..ff8f194
+--- /dev/null
++++ b/_2020/metaprogramming.md
+@@ -0,0 +1,6 @@
++---
++layout: lecture
++title: "Metaprogramming"
++details: build systems, sermver, makefiles, CI
++date: 2019-1-27
++---
+diff --git a/_2020/mlk-day.md b/_2020/mlk-day.md
+new file mode 100644
+index 0000000..8e5a338
+--- /dev/null
++++ b/_2020/mlk-day.md
+@@ -0,0 +1,6 @@
++---
++layout: null
++title: "MLK day"
++date: 2019-1-20
++noclass: true
++---
+diff --git a/_2020/potpourri.md b/_2020/potpourri.md
+new file mode 100644
+index 0000000..cb6c658
+--- /dev/null
++++ b/_2020/potpourri.md
+@@ -0,0 +1,5 @@
++---
++layout: lecture
++title: "Potpourri"
++date: 2019-1-29
++---
+diff --git a/_2020/qa.md b/_2020/qa.md
+new file mode 100644
+index 0000000..25ec27e
+--- /dev/null
++++ b/_2020/qa.md
+@@ -0,0 +1,5 @@
++---
++layout: lecture
++title: "Q&A"
++date: 2019-1-30
++---
+diff --git a/_2020/security.md b/_2020/security.md
+new file mode 100644
+index 0000000..183c171
+--- /dev/null
++++ b/_2020/security.md
+@@ -0,0 +1,5 @@
++---
++layout: lecture
++title: "Security and Privacy"
++date: 2019-1-28
++---
+diff --git a/2020/shell-tools.md b/_2020/shell-tools.md
+similarity index 99%
+rename from 2020/shell-tools.md
+rename to _2020/shell-tools.md
+index 7fc6dcd..051f7f9 100644
+--- a/2020/shell-tools.md
++++ b/_2020/shell-tools.md
+@@ -1,7 +1,8 @@
+ ---
+ layout: lecture
+ title: "Shell Tools and Scripting"
+-presenter: Jose
++date: 2019-1-14
++ready: true
+ ---
+ 
+ In this lecture we will present some of the basics of using bash as a scripting language along with a number of shell tools that cover several of the most common tasks that you will be constantly performing in the command line.
+diff --git a/_2020/version-control.md b/_2020/version-control.md
+new file mode 100644
+index 0000000..6fb7239
+--- /dev/null
++++ b/_2020/version-control.md
+@@ -0,0 +1,5 @@
++---
++layout: lecture
++title: "Version Control (Git)"
++date: 2019-1-22
++---
+diff --git a/_config.yml b/_config.yml
+index 1533842..fce0b9f 100644
+--- a/_config.yml
++++ b/_config.yml
+@@ -15,6 +15,12 @@ timezone: America/New_York
+ analytics:
+   tracking_id: UA-53167467-11
+ 
++collections:
++  '2019':
++    output: true
++  '2020':
++    output: true
++
+ # Excludes
+ exclude:
+   - README.md
+diff --git a/_data/lectures.yml b/_data/lectures.yml
+deleted file mode 100644
+index 33bfcdf..0000000
+--- a/_data/lectures.yml
++++ /dev/null
+@@ -1,29 +0,0 @@
+-- date: 1/13
+-  name: Course overview + the shell
+-  url: /2020/course-shell/
+-- date: 1/14
+-  name: Shell tools and scripting
+-  url: /2020/shell-tools/
+-- date: 1/15
+-  name: Editors (vim)
+-  url: /2020/editors/
+-- date: 1/16
+-  name: Data wrangling
+-  url: /2020/data-wrangling/
+-- date: 1/20
+-  name: (MLK day, no class)
+-- date: 1/21
+-  name: Command-line environment
+-- date: 1/22
+-  name: Version control (git)
+-- date: 1/23
+-  name: Debugging and profiling
+-- date: 1/27
+-  name: Metaprogramming
+-  details: build systems, sermver, makefiles, CI
+-- date: 1/28
+-  name: Security and privacy
+-- date: 1/29
+-  name: Potpourri
+-- date: 1/30
+-  name: Q&A
+diff --git a/_includes/nav.html b/_includes/nav.html
+index 859062b..b953e89 100644
+--- a/_includes/nav.html
++++ b/_includes/nav.html
+@@ -5,7 +5,7 @@
+     <label class="menu-label" for="menu-icon"></label>
+     <div class="trigger">
+       <div class="trigger-child">
+-        <span class="nav-link"><a href="/lectures/">lectures</a></span>
++        <span class="nav-link"><a href="/2020/">lectures</a></span>
+         <span class="nav-link"><a href="/about/">about</a></span>
+       </div>
+     </div>
+diff --git a/index.md b/index.md
+index 45da02b..f8f3356 100644
+--- a/index.md
++++ b/index.md
+@@ -28,14 +28,18 @@ Sign up for the IAP 2020 class by filling out this [registration form](https://f
+ **Office hours**: 32-G9 lounge, 3pm--4pm (every day, right after lecture)
+ 
+ <ul>
+-{% for lecture in site.data.lectures %}
+-  <li>
+-  {% if lecture.url %}
+-    <strong>{{ lecture.date }}</strong>: <a href="{{ lecture.url }}">{{ lecture.name }}</a>
+-  {% else %}
+-    <strong>{{ lecture.date }}</strong>: {{ lecture.name }}
+-  {% endif %}
+-  </li>
++{% assign lectures = site['2020'] | sort: 'date' %}
++{% for lecture in lectures %}
++    {% if lecture.phony != true %}
++        <li>
++        <strong>{{ lecture.date | date: '%-m/%d' }}</strong>:
++        {% if lecture.ready %}
++            <a href="{{ lecture.url }}">{{ lecture.title }}</a>
++        {% else %}
++            {{ lecture.title }} {% if lecture.noclass %}[no class]{% endif %}
++        {% endif %}
++        </li>
++    {% endif %}
+ {% endfor %}
+ </ul>
+ 
+diff --git a/lectures.html b/lectures.html
+deleted file mode 100644
+index 1160ba5..0000000
+--- a/lectures.html
++++ /dev/null
+@@ -1,27 +0,0 @@
+----
+-layout: page
+-title: "Lectures"
+----
+-
+-
+-<ul class="double-spaced">
+-{% for lecture in site.data.lectures %}
+-  <li>
+-  {% if lecture.url %}
+-    <strong>{{ lecture.date }}</strong>: <a href="{{ lecture.url }}">{{ lecture.name }}</a>
+-  {% elsif lecture.name contains "MLK" %}
+-    <strong>{{ lecture.date }}</strong>: {{ lecture.name }}
+-  {% else %}
+-    <strong>{{ lecture.date }}</strong>: {{ lecture.name }} [coming soon]
+-  {% endif %}
+-  {% if lecture.details %}
+-    <br>
+-    ({{ lecture.details }})
+-  {% endif %}
+-  </li>
+-{% endfor %}
+-</ul>
+-
+-<h2>Previous year's lectures</h2>
+-
+-<p>You can find lecture notes and videos from last year's version of this class on the <a href="https://hacker-tools.github.io/lectures/">Hacker Tools IAP 2019</a> website.</p>
+diff --git a/schedule.html b/schedule.html
+deleted file mode 100644
+index c5b83d2..0000000
+--- a/schedule.html
++++ /dev/null
+@@ -1,5 +0,0 @@
+----
+-layout: redirect
+-redirect: /lectures/
+-title: Lectures
+----

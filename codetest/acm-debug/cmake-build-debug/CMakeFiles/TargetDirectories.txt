@@ -1,0 +1,3 @@
+/Users/shulva/Documents/shulva-learning/codetest/acm-debug/cmake-build-debug/CMakeFiles/hw.dir
+/Users/shulva/Documents/shulva-learning/codetest/acm-debug/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/shulva/Documents/shulva-learning/codetest/acm-debug/cmake-build-debug/CMakeFiles/rebuild_cache.dir

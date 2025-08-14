@@ -1,0 +1,5 @@
+3
+A B C D F
+C E G H
+B G I J
+A J

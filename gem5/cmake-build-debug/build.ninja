@@ -51,52 +51,17 @@ build cmake_object_order_depends_target_gem5: phony || CMakeFiles/gem5.dir
 
 build CMakeFiles/gem5.dir/src/protocol_converter/converters/PCIeConverter.cc.o: CXX_COMPILER__gem5_unscanned_Debug /Users/shulva/Documents/projects/gem5/src/protocol_converter/converters/PCIeConverter.cc || cmake_object_order_depends_target_gem5
   DEP_FILE = CMakeFiles/gem5.dir/src/protocol_converter/converters/PCIeConverter.cc.o.d
-  FLAGS = -g -std=gnu++14 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk -fcolor-diagnostics
+  FLAGS = -g -std=gnu++14 -arch arm64 -fcolor-diagnostics
   INCLUDES = -I/Users/shulva/Documents/projects/gem5/src/protocol_converter -I/Users/shulva/Documents/projects/gem5/src/protocol_converter/converters -I/Users/shulva/Documents/projects/gem5/src/protocol_converter/link_layer -I/Users/shulva/Documents/projects/gem5/src/protocol_converter/packet -I/Users/shulva/Documents/projects/gem5/src/protocol_converter/phy_abstraction -I/Users/shulva/Documents/projects/gem5/src/protocol_converter/upf
   OBJECT_DIR = CMakeFiles/gem5.dir
   OBJECT_FILE_DIR = CMakeFiles/gem5.dir/src/protocol_converter/converters
-
-build CMakeFiles/gem5.dir/src/protocol_converter/converters/ProtocolConverter.cc.o: CXX_COMPILER__gem5_unscanned_Debug /Users/shulva/Documents/projects/gem5/src/protocol_converter/converters/ProtocolConverter.cc || cmake_object_order_depends_target_gem5
-  DEP_FILE = CMakeFiles/gem5.dir/src/protocol_converter/converters/ProtocolConverter.cc.o.d
-  FLAGS = -g -std=gnu++14 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk -fcolor-diagnostics
-  INCLUDES = -I/Users/shulva/Documents/projects/gem5/src/protocol_converter -I/Users/shulva/Documents/projects/gem5/src/protocol_converter/converters -I/Users/shulva/Documents/projects/gem5/src/protocol_converter/link_layer -I/Users/shulva/Documents/projects/gem5/src/protocol_converter/packet -I/Users/shulva/Documents/projects/gem5/src/protocol_converter/phy_abstraction -I/Users/shulva/Documents/projects/gem5/src/protocol_converter/upf
-  OBJECT_DIR = CMakeFiles/gem5.dir
-  OBJECT_FILE_DIR = CMakeFiles/gem5.dir/src/protocol_converter/converters
-
-build CMakeFiles/gem5.dir/src/protocol_converter/link_layer/PCIeLinkLayer.cc.o: CXX_COMPILER__gem5_unscanned_Debug /Users/shulva/Documents/projects/gem5/src/protocol_converter/link_layer/PCIeLinkLayer.cc || cmake_object_order_depends_target_gem5
-  DEP_FILE = CMakeFiles/gem5.dir/src/protocol_converter/link_layer/PCIeLinkLayer.cc.o.d
-  FLAGS = -g -std=gnu++14 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk -fcolor-diagnostics
-  INCLUDES = -I/Users/shulva/Documents/projects/gem5/src/protocol_converter -I/Users/shulva/Documents/projects/gem5/src/protocol_converter/converters -I/Users/shulva/Documents/projects/gem5/src/protocol_converter/link_layer -I/Users/shulva/Documents/projects/gem5/src/protocol_converter/packet -I/Users/shulva/Documents/projects/gem5/src/protocol_converter/phy_abstraction -I/Users/shulva/Documents/projects/gem5/src/protocol_converter/upf
-  OBJECT_DIR = CMakeFiles/gem5.dir
-  OBJECT_FILE_DIR = CMakeFiles/gem5.dir/src/protocol_converter/link_layer
-
-build CMakeFiles/gem5.dir/src/protocol_converter/packet/TLP.cc.o: CXX_COMPILER__gem5_unscanned_Debug /Users/shulva/Documents/projects/gem5/src/protocol_converter/packet/TLP.cc || cmake_object_order_depends_target_gem5
-  DEP_FILE = CMakeFiles/gem5.dir/src/protocol_converter/packet/TLP.cc.o.d
-  FLAGS = -g -std=gnu++14 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk -fcolor-diagnostics
-  INCLUDES = -I/Users/shulva/Documents/projects/gem5/src/protocol_converter -I/Users/shulva/Documents/projects/gem5/src/protocol_converter/converters -I/Users/shulva/Documents/projects/gem5/src/protocol_converter/link_layer -I/Users/shulva/Documents/projects/gem5/src/protocol_converter/packet -I/Users/shulva/Documents/projects/gem5/src/protocol_converter/phy_abstraction -I/Users/shulva/Documents/projects/gem5/src/protocol_converter/upf
-  OBJECT_DIR = CMakeFiles/gem5.dir
-  OBJECT_FILE_DIR = CMakeFiles/gem5.dir/src/protocol_converter/packet
 
 build CMakeFiles/gem5.dir/src/protocol_converter/phy_abstraction/SimpleChipletLink.cc.o: CXX_COMPILER__gem5_unscanned_Debug /Users/shulva/Documents/projects/gem5/src/protocol_converter/phy_abstraction/SimpleChipletLink.cc || cmake_object_order_depends_target_gem5
   DEP_FILE = CMakeFiles/gem5.dir/src/protocol_converter/phy_abstraction/SimpleChipletLink.cc.o.d
-  FLAGS = -g -std=gnu++14 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk -fcolor-diagnostics
+  FLAGS = -g -std=gnu++14 -arch arm64 -fcolor-diagnostics
   INCLUDES = -I/Users/shulva/Documents/projects/gem5/src/protocol_converter -I/Users/shulva/Documents/projects/gem5/src/protocol_converter/converters -I/Users/shulva/Documents/projects/gem5/src/protocol_converter/link_layer -I/Users/shulva/Documents/projects/gem5/src/protocol_converter/packet -I/Users/shulva/Documents/projects/gem5/src/protocol_converter/phy_abstraction -I/Users/shulva/Documents/projects/gem5/src/protocol_converter/upf
   OBJECT_DIR = CMakeFiles/gem5.dir
   OBJECT_FILE_DIR = CMakeFiles/gem5.dir/src/protocol_converter/phy_abstraction
-
-build CMakeFiles/gem5.dir/src/protocol_converter/GenericPacketProcessor.cc.o: CXX_COMPILER__gem5_unscanned_Debug /Users/shulva/Documents/projects/gem5/src/protocol_converter/GenericPacketProcessor.cc || cmake_object_order_depends_target_gem5
-  DEP_FILE = CMakeFiles/gem5.dir/src/protocol_converter/GenericPacketProcessor.cc.o.d
-  FLAGS = -g -std=gnu++14 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk -fcolor-diagnostics
-  INCLUDES = -I/Users/shulva/Documents/projects/gem5/src/protocol_converter -I/Users/shulva/Documents/projects/gem5/src/protocol_converter/converters -I/Users/shulva/Documents/projects/gem5/src/protocol_converter/link_layer -I/Users/shulva/Documents/projects/gem5/src/protocol_converter/packet -I/Users/shulva/Documents/projects/gem5/src/protocol_converter/phy_abstraction -I/Users/shulva/Documents/projects/gem5/src/protocol_converter/upf
-  OBJECT_DIR = CMakeFiles/gem5.dir
-  OBJECT_FILE_DIR = CMakeFiles/gem5.dir/src/protocol_converter
-
-build CMakeFiles/gem5.dir/src/protocol_converter/packet/PacketGenerator.cc.o: CXX_COMPILER__gem5_unscanned_Debug /Users/shulva/Documents/projects/gem5/src/protocol_converter/packet/PacketGenerator.cc || cmake_object_order_depends_target_gem5
-  DEP_FILE = CMakeFiles/gem5.dir/src/protocol_converter/packet/PacketGenerator.cc.o.d
-  FLAGS = -g -std=gnu++14 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk -fcolor-diagnostics
-  INCLUDES = -I/Users/shulva/Documents/projects/gem5/src/protocol_converter -I/Users/shulva/Documents/projects/gem5/src/protocol_converter/converters -I/Users/shulva/Documents/projects/gem5/src/protocol_converter/link_layer -I/Users/shulva/Documents/projects/gem5/src/protocol_converter/packet -I/Users/shulva/Documents/projects/gem5/src/protocol_converter/phy_abstraction -I/Users/shulva/Documents/projects/gem5/src/protocol_converter/upf
-  OBJECT_DIR = CMakeFiles/gem5.dir
-  OBJECT_FILE_DIR = CMakeFiles/gem5.dir/src/protocol_converter/packet
 
 
 # =============================================================================
@@ -106,8 +71,8 @@ build CMakeFiles/gem5.dir/src/protocol_converter/packet/PacketGenerator.cc.o: CX
 #############################################
 # Link the executable gem5
 
-build gem5: CXX_EXECUTABLE_LINKER__gem5_Debug CMakeFiles/gem5.dir/src/protocol_converter/converters/PCIeConverter.cc.o CMakeFiles/gem5.dir/src/protocol_converter/converters/ProtocolConverter.cc.o CMakeFiles/gem5.dir/src/protocol_converter/link_layer/PCIeLinkLayer.cc.o CMakeFiles/gem5.dir/src/protocol_converter/packet/TLP.cc.o CMakeFiles/gem5.dir/src/protocol_converter/phy_abstraction/SimpleChipletLink.cc.o CMakeFiles/gem5.dir/src/protocol_converter/GenericPacketProcessor.cc.o CMakeFiles/gem5.dir/src/protocol_converter/packet/PacketGenerator.cc.o
-  FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk
+build gem5: CXX_EXECUTABLE_LINKER__gem5_Debug CMakeFiles/gem5.dir/src/protocol_converter/converters/PCIeConverter.cc.o CMakeFiles/gem5.dir/src/protocol_converter/phy_abstraction/SimpleChipletLink.cc.o
+  FLAGS = -g -arch arm64
   OBJECT_DIR = CMakeFiles/gem5.dir
   POST_BUILD = :
   PRE_LINK = :
