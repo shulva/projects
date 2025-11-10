@@ -3,3 +3,6 @@
 /irpc/zookeeper/
 /irpc/apache-jmeter-5.6.3/
 d2l-zh/
+/codetest/acm-debug/cmake-build-debug
+/codetest/leetcode-debug/cmake-build-debug
+/codetest/cuda/cmake-build-debug
