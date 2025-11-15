@@ -6,3 +6,4 @@ d2l-zh/
 /codetest/acm-debug/cmake-build-debug
 /codetest/leetcode-debug/cmake-build-debug
 /codetest/cuda/cmake-build-debug
+/codetest/rust/hello-rust/target
