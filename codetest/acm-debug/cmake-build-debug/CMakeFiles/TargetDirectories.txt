@@ -1,3 +1,0 @@
-D:/others/projects/codetest/acm-debug/cmake-build-debug/CMakeFiles/hw.dir
-D:/others/projects/codetest/acm-debug/cmake-build-debug/CMakeFiles/edit_cache.dir
-D:/others/projects/codetest/acm-debug/cmake-build-debug/CMakeFiles/rebuild_cache.dir
