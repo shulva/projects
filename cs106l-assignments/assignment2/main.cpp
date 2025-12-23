@@ -9,12 +9,13 @@
 
 #include <fstream>
 #include <iostream>
+#include <sstream>
 #include <queue>
 #include <set>
 #include <string>
 #include <unordered_set>
 
-std::string kYourName = "STUDENT TODO"; // Don't forget to change this!
+std::string kYourName = "ruihan li"; // Don't forget to change this!
 
 /**
  * Takes in a file name and returns a set containing all of the applicant names as a set.
@@ -28,9 +29,26 @@ std::string kYourName = "STUDENT TODO"; // Don't forget to change this!
  * to also change the corresponding functions in `utils.h`.
  */
 std::set<std::string> get_applicants(std::string filename) {
-  // STUDENT TODO: Implement this function.
+    std::ifstream file(filename);
+    std::string line;
+    std::set<std::string> res;
+
+    while(std::getline(file,line)){
+        res.insert(line);
+    }
+
+    return res;
 }
 
+
+std::string initial(std::string name){ //name: xxx xxx
+    std::string res,first,second;
+    std::stringstream ss(name);
+    ss>>first>>second;
+    res.push_back(first[0]);
+    res.push_back(second[0]);
+    return res;
+}
 /**
  * Takes in a set of student names by reference and returns a queue of names
  * that match the given student name.
@@ -40,7 +58,15 @@ std::set<std::string> get_applicants(std::string filename) {
  * @return          A queue containing pointers to each matching name.
  */
 std::queue<const std::string*> find_matches(std::string name, std::set<std::string>& students) {
-  // STUDENT TODO: Implement this function.
+    std::string initials = initial(name);
+    std::queue<const std::string*> res;
+
+    for(auto& n:students){
+        if(initials==initial(n))
+            res.push(&n);
+    }
+
+    return res;
 }
 
 /**
@@ -54,7 +80,13 @@ std::queue<const std::string*> find_matches(std::string name, std::set<std::stri
  *                Will return "NO MATCHES FOUND." if `matches` is empty.
  */
 std::string get_match(std::queue<const std::string*>& matches) {
-  // STUDENT TODO: Implement this function.
+    if(matches.empty())
+        return "NO MATCHES FOUND.";
+    else
+    {
+        const std::string* ans = matches.front();
+        return *ans;
+    }
 }
 
 /* #### Please don't remove this line! #### */

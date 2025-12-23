@@ -5,7 +5,9 @@ Make a Class
 ------------
 
 Q1. What’s const-correctness and why is it important?
-A1. TODO
+A1. const-correctness 是一种编程实践，指的是在 C++ 代码中有意识地、正确地使用 const 关键字来标识那些不应该被修改的数据。
+const-correctness可以增强代码安全性，由编译器保证。可以提高代码的可读性和可维护性。
+
 
 Q2. Is your class const-correct? How do you know?
-A2. TODO
+A2. get方法都是const的。检查可以获取对象内部变量的函数的签名即可。
