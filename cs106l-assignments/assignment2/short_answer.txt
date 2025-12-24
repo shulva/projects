@@ -1,0 +1,25 @@
+Before submitting this file, make sure that there are no more TODO
+placeholders remaining in the file (and remove this comment too).
+
+Marriage Pact
+-------------
+
+Q1. It is your choice to use either an ordered or unordered set. In a few sentences, what are some of the tradeoffs between the two? Additionally, please give an example (that has not been shown in lecture) of a valid hash function that could be used to hash student names for an unordered set.
+A1.
+Tradeoffs:
+unordered_set is usually faster than set , However, it uses more memory
+valid function:
+
+struct SimpleNameHash {
+    std::size_t operator()(const std::string& s) const noexcept {
+        std::size_t h = 0;
+        for (unsigned char c : s) {
+            h = h * 131 + c;   
+        }
+        return h;
+    }
+};
+
+
+Q2. Note that we are saving pointers to names in the queue, not names themselves. Why might this be desired in this problem? What happens if the original set where the names are stored goes out of scope and the pointers are referenced?
+A2. 存指针可以避免拷贝，而且只要set没被销毁，queue里面的数据就是稳定的。但是如果原set出了scope被销毁，这时指针变为悬垂指针，再解引用会引发UB.

@@ -1,0 +1,35 @@
+Before submitting this file, make sure that there are no more TODO
+placeholders remaining in the file (and remove this comment too).
+
+Unique Pointer
+--------------
+
+Q1. List one or two benefits of using RAII to manage memory instead manually calling `new` and `delete`.
+A1.
+1.By abiding by the RAII policy we avoid 'half-valid' states.
+2.No matter what, the destructor is called whenever the resource goes out of scope.
+3.One more thing: the resource/object is usable immediately after it is created.
+
+Q2. When implementing move semantics for a `unique_ptr`, for example in the move constructor `unique_ptr(unique_ptr&& other)`, it is essential that we set the underlying pointer of the `other` parameter to `nullptr` before exiting the function. Explain in your own words what problem would arise if we did not.
+A2. 会导致双重释放问题
+
+Q3. This method of recursive deallocation through RAII works great for small lists, but may pose a problem for longer lists. Why? Hint: what is the limit for how "deep" a recursive function's call stack can grow?
+A3. 这种通过 RAII 实现的递归式析构方法，对于长链表来说，最主要的问题是可能导致栈溢出 (Stack Overflow)。
+例如，销毁头结点时，其的析构函数会delete其next的第一个Node节点，这个Node节点又会delete第二个Node，从而一直递归下去，形成一个析构函数的递归调用链，可能会把调用栈挤爆
+
+Q4. What does `std::move` do in this context? Why is it safe to use `std::move` and move semantics here?
+A4.
+node->next = std::move(head); head 指向的是已经创建好的链表的后半部分
+执行之后，新节点 node 的 next 指针现在拥有了之前由 head 所拥有的链表部分。head 变量本身变为空，可以安全地被重新赋值。
+
+head = std::move(node);
+在这一步中，node 是我们刚刚创建并链接好的新节点。 head 指针更新为指向更长链表的新头部。
+
+此时std::move()安全，是因为我们知道head变量的旧值已经不再需要，且马上下一个语句就要赋予head新值。
+而node则是因为node变量的生命周期即将结束（因为它是在 for 循环内部声明的局部变量）
+
+而且，unique_ptr 保证了所有权的唯一性
+当 head 的所有权转移给 node->next 时，head 内部的指针变成了 nullptr。这意味着即使 head 变量本身还存在，它也不再管理任何内存，不会有双重释放的风险。
+同样，当 node 的所有权转移给 head 时，node 内部指针也变成了 nullptr。当 for 循环的当前迭代结束，node 被销毁时，它的析构函数看到内部指针是 nullptr，于是安全地什么也不做。
+
+因此，整个过程清晰地、安全地将所有权一步步地从一个unique_ptr传递到另一个

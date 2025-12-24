@@ -4,5 +4,7 @@
 /irpc/apache-jmeter-5.6.3/
 d2l-zh/
 cmake-build-debug/
+build/
+autograder/
 
 /codetest/rust/hello-rust/target
