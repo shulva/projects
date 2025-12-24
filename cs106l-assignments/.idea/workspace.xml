@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="24bacf84-630d-4dd5-9a55-f13812c7cb8b" name="更改" comment="kk">
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/cs106l-assignments.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.vscode/settings.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CS106L-Self-Learning/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CS106L-Self-Learning/projects/GapBuffer/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CS106L-Self-Learning/projects/GapBuffer/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CS106L-Self-Learning/projects/GapBuffer/doc/Short Assignment 3 - Gap Buffer.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CS106L-Self-Learning/projects/GapBuffer/gap_buffer.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CS106L-Self-Learning/projects/GapBuffer/gap_buffer_test.cc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CS106L-Self-Learning/projects/HashMap/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CS106L-Self-Learning/projects/HashMap/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CS106L-Self-Learning/projects/HashMap/doc/HashMap_Starter/hashmap.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CS106L-Self-Learning/projects/HashMap/doc/HashMap_Starter/hashmap.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CS106L-Self-Learning/projects/HashMap/doc/HashMap_Starter/hashmap_iterator.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CS106L-Self-Learning/projects/HashMap/doc/HashMap_doc.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CS106L-Self-Learning/projects/HashMap/hashmap.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CS106L-Self-Learning/projects/HashMap/hashmap.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CS106L-Self-Learning/projects/HashMap/hashmap_iterator.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CS106L-Self-Learning/projects/HashMap/hashmap_perf.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CS106L-Self-Learning/projects/HashMap/hashmap_test.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CS106L-Self-Learning/projects/HashMap/test_settings.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CS106L-Self-Learning/projects/KDTree/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CS106L-Self-Learning/projects/KDTree/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CS106L-Self-Learning/projects/KDTree/bounded_priority_queue.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CS106L-Self-Learning/projects/KDTree/doc/005_assignment_3_kdtree.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CS106L-Self-Learning/projects/KDTree/kd_tree.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CS106L-Self-Learning/projects/KDTree/kd_tree_test.cc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CS106L-Self-Learning/projects/KDTree/point.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment0/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment0/docs/autograder.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment0/docs/header.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment0/docs/mac-zsh.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment0/docs/vscode-extensions.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment0/main" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment0/main.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment1/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment1/autograder/autograder.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment1/autograder/courses_not_offered.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment1/autograder/courses_offered.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment1/autograder/utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment1/courses.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment1/docs/autograder.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment1/main" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment1/main.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment1/student_output/courses_not_offered.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment1/student_output/courses_offered.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment1/utils.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment2/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment2/autograder/autograder.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment2/autograder/requirements.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment2/autograder/student_output/match.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment2/autograder/student_output/set.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment2/autograder/utils.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment2/autograder/utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment2/docs/marriage_pact.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment2/main" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment2/main.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment2/short_answer.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment2/students.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment3/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment3/autograder/autograder.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment3/autograder/requirements.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment3/autograder/utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment3/class.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment3/class.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment3/docs/bjarne.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment3/main" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment3/main.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment3/sandbox.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment3/short_answer.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment3/utils.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment4/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment4/autograder/autograder.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment4/autograder/gold/(kafka).txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment4/autograder/gold/(marquez).txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment4/autograder/gold/(morrison).txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment4/autograder/gold/gibberish.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment4/autograder/gold/melville.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment4/autograder/gold/orwell.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment4/autograder/gold/tolstoy.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment4/autograder/utils.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment4/autograder/utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment4/docs/header.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment4/docs/mispelled.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment4/docs/spellcheck.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment4/examples/(kafka).txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment4/examples/(marquez).txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment4/examples/(morrison).txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment4/examples/gibberish.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment4/examples/melville.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment4/examples/orwell.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment4/examples/tolstoy.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment4/main" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment4/main.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment4/spellcheck.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment4/spellcheck.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment4/utils.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment4/words.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment5/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment5/autograder/autograder.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment5/autograder/diagnostics.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment5/autograder/utils.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment5/autograder/utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment5/docs/logo.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment5/main" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment5/main.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment5/user.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment5/user.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment6/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment6/autograder/autograder.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment6/autograder/courses.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment6/autograder/utils.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment6/autograder/utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment6/main" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment6/main.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment7/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment7/autograder/autograder.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment7/autograder/diagnostics.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment7/autograder/utils.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment7/autograder/utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment7/docs/art.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment7/main" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment7/main.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment7/short_answer.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assignment7/unique_ptr.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/vscode-extensions.png" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="379tjh5UGU8I7Hj9LSgl70afXTM" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/Users/shulva/Documents/projects/cs106l-assignments",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "Settings.Markdown",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="默认任务">
+      <changelist id="24bacf84-630d-4dd5-9a55-f13812c7cb8b" name="更改" comment="" />
+      <created>1766327251265</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1766327251265</updated>
+      <workItem from="1766327252307" duration="3589000" />
+      <workItem from="1766389340013" duration="527000" />
+      <workItem from="1766389963651" duration="34900000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
